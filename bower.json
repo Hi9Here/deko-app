@@ -1,0 +1,39 @@
+{
+  "name": "cards",
+  "authors": [
+    "Marcus Hitchins <marcus7777@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "deko-deck": "Hi9Here/deko-deck",
+    "iron-flex-layout": "PolymerElements/iron-flex-layout",
+    "deko-page": "Hi9Here/deko-page",
+    "content-card": "marcus7777/content-card",
+    "firebase-ui-auth": "marcus7777/firebase-ui-auth",
+    "iron-pages": "PolymerElements/iron-pages#^1.0.8",
+    "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#^1.4.3",
+    "paper-header-panel": "^1.1.7",
+    "paper-scroll-header-panel": "PolymerElements/paper-scroll-header-panel#^1.0.16",
+    "paper-fab": "PolymerElements/paper-fab#^1.2.1",
+    "paper-styles": "1.1.5"
+  },
+  "resolutions": {
+    "iron-a11y-keys-behavior": "~1.0.5",
+    "firebase": "^3.3.0",
+    "polymer": "~1.8.0",
+    "paper-icon-button": "^1.0.0",
+    "inbox-search": "45e40c4300",
+    "paper-item": "^1.0.0",
+    "iron-flex-layout": "~1.0.2"
+  }
+}
