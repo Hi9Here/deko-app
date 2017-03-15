@@ -1,0 +1,13 @@
+[debug] ----------------------------------------------------------------------
+[debug] Command:      /usr/local/Cellar/node/5.1.1/bin/node /usr/local/bin/firebase serve
+[debug] CLI Version:  3.2.1
+[debug] Platform:     darwin
+[debug] Node Version: v5.1.1
+[debug] Time:         Tue Mar 14 2017 09:50:02 GMT+0000 (GMT)
+[debug] ----------------------------------------------------------------------
+[debug] 
+[info] Starting Firebase development server...
+[info] 
+[info] Project Directory: /Users/wo-home/Documents/dev/deko-app
+[info] 
+[info] Server listening at: http://localhost:5000
