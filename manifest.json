@@ -1,0 +1,29 @@
+{
+    "name": "deko - Making the Web Simple",
+    "short_name": "deko",
+    "icons": [{
+        "src": "images/images/deko-icon-32.png",
+        "type": "image/png",
+        "sizes": "32x32"
+    }, {
+        "src": "images/images/hazel-logo-128.svg",
+        "sizes": "128x128",
+        "type": "image/svg"
+    }, {
+        "src": "images/images/hazel-logo-144.png",
+        "sizes": "144x144",
+        "type": "image/png"
+    }, {
+        "src": "images/images/hazel-logo-192.svg",
+        "sizes": "192x192",
+        "type": "image/svg"
+    }, {
+        "src": "images/images/hazel-logo-384.svg",
+        "sizes": "384x384",
+        "type": "image/svg"
+    }],
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ef5455",
+    "theme_color": "#eee"
+}
