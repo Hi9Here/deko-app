@@ -26,13 +26,8 @@
   <body>
     <template is="dom-bind" id="app">
       <app-location route="{{route}}"></app-location>
-
-      <app-route route="{{route}}" pattern="/:owner/" data="{{data}}"></app-route>
-      <app-route route="{{route}}" pattern="/share/:deck/" data="{{data1}}"></app-route>
-      <app-route route="{{route}}" pattern="/:owner/:deck/" data="{{data2}}"></app-route>
-      <app-route route="{{route}}" pattern="/:owner/:deck/:card/" data="{{data3}}"></app-route>
-
-      <deko-page user="[[user]]" on-logout="logout" routeDeck="{{deckData.deck}}" page="[[pageData.page]]" >
+      <app-route route="{{route}}" pattern="/:deck" data="{{data}}"></app-route>
+      <deko-page user="[[user]]" on-logout="logout" route="{{data}}" >
         <login-page>
           <img src="deko-150.png"/>
           <firebase-ui-auth
