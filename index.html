@@ -27,7 +27,7 @@
     <template is="dom-bind" id="app">
       <app-location route="{{route}}"></app-location>
       <app-route route="{{route}}" pattern="/:deck" data="{{data}}"></app-route>
-      <deko-page user="[[user]]" on-logout="logout" route="{{data}}" >
+      <deko-page user="[[user]]" on-logout="logout" the-deck="{{data.deck}}" >
         <login-page>
           <img src="deko-150.png"/>
           <firebase-ui-auth
