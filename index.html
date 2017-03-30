@@ -29,7 +29,7 @@
     <template is="dom-bind" id="app">
       <app-location route="{{route}}"></app-location>
       <app-route route="{{route}}" pattern="/:deck" data="{{data}}"></app-route>
-      <deko-page user="[[user]]" on-logout="logout" url-deck="{{data}}" >
+      <deko-page user="[[user]]" on-logout="logout" url-deck="{{data.deck}}" >
         <login-page>
           <img src="deko-150.png"/>
           <firebase-ui-auth id="auth" user="{{user}}" photo="{{user.imageUrl}}" sign-in-success-url="" sign-in='["GoogleAuthProvider","EmailAuthProvider"]'></firebase-ui-auth>
