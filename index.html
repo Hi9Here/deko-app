@@ -6,11 +6,13 @@
     <link rel="shortcut icon" sizes="32x32" href="/images/deko-icon-32.png">
     <meta name="theme-color" content="#fff">
     <link rel="manifest" href="/manifest.json">
-    <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
-    <link rel="import" href="bower_components/deko-page/deko-page.html">
-    <link rel="import" href="bower_components/iron-image/iron-image.html">
-    <link rel="import" href="bower_components/firebase-ui-auth/firebase-ui-auth.html">
-    <script src="https://www.gstatic.com/firebasejs/3.6.6/firebase.js"></script>
+    <script src="/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="/bower_components/deko-page/deko-page.html">
+    <link rel="import" href="/bower_components/iron-image/iron-image.html">
+    <link rel="import" href="/bower_components/app-route/app-location.html">
+    <link rel="import" href="/bower_components/app-route/app-route.html">
+    <link rel="import" href="/bower_components/firebase-ui-auth/firebase-ui-auth.html">
+    <script src="/bower_components/firebase/firebase.js"></script>
     <script>
       // Initialize Firebase
       var config = {
@@ -26,17 +28,11 @@
   <body>
     <template is="dom-bind" id="app">
       <app-location route="{{route}}"></app-location>
-
-      <app-route route="{{route}}" pattern="/:owner/" data="{{data}}"></app-route>
-      <app-route route="{{route}}" pattern="/share/:deck/" data="{{data1}}"></app-route>
-      <app-route route="{{route}}" pattern="/:owner/:deck/" data="{{data2}}"></app-route>
-      <app-route route="{{route}}" pattern="/:owner/:deck/:card/" data="{{data3}}"></app-route>
-
-      <deko-page user="[[user]]" on-logout="logout" routeDeck="{{deckData.deck}}" page="[[pageData.page]]" >
+      <app-route route="{{route}}" pattern="/:deck" data="{{data}}"></app-route>
+      <deko-page user="[[user]]" on-logout="logout" url-deck="{{data.deck}}" >
         <login-page>
           <img src="deko-150.png"/>
-          <firebase-ui-auth
-          id="auth" user="{{user}}" photo="{{user.imageUrl}}" sign-in-success-url="" sign-in='["GoogleAuthProvider","EmailAuthProvider"]'></firebase-ui-auth>
+          <firebase-ui-auth id="auth" user="{{user}}" photo="{{user.imageUrl}}" sign-in-success-url="" sign-in='["GoogleAuthProvider","EmailAuthProvider"]'></firebase-ui-auth>
         </login-page>
       </deko-page>
     </template>
