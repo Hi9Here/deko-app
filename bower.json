@@ -39,6 +39,7 @@
     "paper-item": "^1.0.0",
     "iron-flex-layout": "~1.3.2",
     "test-fixture": "^1.0.0",
-    "paper-styles": "^1.2.0"
+    "paper-styles": "^1.2.0",
+    "polymer-quill": "two-way-data"
   }
 }
