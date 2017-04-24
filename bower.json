@@ -20,6 +20,7 @@
   "dependencies": {
     "iron-flex-layout": "PolymerElements/iron-flex-layout",
     "deko-page": "Hi9Here/deko-page",
+    "deko-cards": "Hi9Here/deko-cards",
     "content-card": "marcus7777/content-card",
     "firebase-ui-auth": "marcus7777/firebase-ui-auth",
     "iron-pages": "PolymerElements/iron-pages#^1.0.8",
