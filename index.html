@@ -27,15 +27,21 @@
       }
       firebase.initializeApp(config)
     </script>
+    <style>
+html, body {
+    margin: 0;
+    height: 100%;
+}
+    </style>
   </head>
   <body>
     <template is="dom-bind" id="app">
       <app-location route="{{route}}"></app-location>
       <app-route route="{{route}}" pattern="/:deck" data="{{data}}"></app-route>
-      <deko-page user="[[user]]" on-logout="logout" url-deck="{{data.deck}}" >
+      <deko-page user="[[user]]" on-logout="logout" on-login="login" url-deck="{{data.deck}}" >
         <login-page>
           <img src="deko-150.png"/>
-          <firebase-ui-auth id="auth" user="{{user}}" photo="{{user.imageUrl}}" sign-in-success-url="" sign-in='["GoogleAuthProvider","EmailAuthProvider"]'></firebase-ui-auth>
+          <firebase-ui-auth id="auth" user="{{user}}" photo="{{user.imageUrl}}" sign-in-success-url="" sign-in='["GoogleAuthProvider","EmailAuthProvider","Anonymous"]'></firebase-ui-auth>
         </login-page>
       </deko-page>
     </template>
@@ -43,5 +49,6 @@
   <script>
    var app = document.querySelector('#app')
    app.logout = function() { app.$.auth.signOut() }
+   app.login = function() { app.$.auth.trySignIn() }
   </script>
 </html>
