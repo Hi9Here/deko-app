@@ -1,6 +1,7 @@
 {
-    "name": "deko - Making the Web Simple",
+    "name": "Making the Web Simple",
     "short_name": "deko",
+    "orientation": "portrait",
     "icons": [{
         "src": "images/images/deko-icon-32.png",
         "type": "image/png",
@@ -9,11 +10,17 @@
     {
         "src": "images/images/deko-logo-192.png",
         "sizes": "192x192",
-        "type": "image/svg"
+        "type": "image/png"
+    },
+    {
+        "src": "images/images/deko-logo-192.png",
+        "sizes": "128x128",
+        "type": "image/png"
     }
+
     ],
     "start_url": "/",
     "display": "fullscreen",
-    "background_color": "#ef5455",
+    "background_color": "#b8ef54",
     "theme_color": "#eee"
 }
