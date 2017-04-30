@@ -41,7 +41,7 @@ html, body {
       <app-route route="{{route}}" pattern="/:deck" data="{{data}}"></app-route>
       <deko-page user="[[user]]" on-logout="logout" on-login="login" url-deck="{{data.deck}}" >
         <login-page>
-          <img src="deko-150.png"/>
+          <img src="/deko-150.png"/>
           <firebase-ui-auth id="auth" user="{{user}}" photo="{{user.imageUrl}}" sign-in-success-url="" sign-in='["GoogleAuthProvider","EmailAuthProvider","Anonymous"]'></firebase-ui-auth>
         </login-page>
       </deko-page>
