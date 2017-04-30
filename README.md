@@ -2,7 +2,7 @@
 ## This is the Home Page of deko
 
 ### Issue by Issue
-Issues are created on deko-app. When the testing below is done we version to V1. We do not move on till we get to the stage below.
+Issues are created on deko-app. When the testing below is done successfully we version to V1. We do not move on till we get to the stage below.
 
 ### Testing Protocol
 
