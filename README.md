@@ -21,6 +21,12 @@ Due to the nature of Polymer and Firebase it is extreamly difficult to do end to
   - Add Image
   - See Text Change in View
   - See Change in Card on Deck
+  - Edit by Changing Image
+  - See that Image has changed
+  - Change Title and Description
+  - Change content in Quill
+  - Check in View
+  - Check on Deck
   - Delete Card
 
 * The deck is then shared as Anon and viewed in an Icognito browser.
