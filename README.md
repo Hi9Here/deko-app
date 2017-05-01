@@ -14,22 +14,30 @@ Due to the nature of Polymer and Firebase it is extreamly difficult to do end to
 * Quick Check to see it works locally
 * Put Pull Request In
 * woisme pulls in the pull request and tests locally
+
+#### Test 1
   - Login
-  - View Page
-  - Add Card
-  - Add Text
+  - View Deck
+  - Navigate Between Pillars
+  - Add Card Title and Description
   - Add Image
-  - See Text Change in View
-  - See Change in Card on Deck
-  - Edit by Changing Image
-  - See that Image has changed
-  - Change Title and Description
-  - Change content in Quill
-  - Check in View
-  - Check on Deck
+  - Title and Description in Card View
+  - Edit Image
+  - Image has changed in Card View before returning from Deck View
+  - Image has changed in Deck View
+  - Edit Title and Description
+  - Title and Description has changed in Card View before returning from Deck View
+  - Title and Descrioption changed in Deck View
+  - Edit Quill
+  - Text Changed in View
+  - Text Stays Changed Returning from Deck View
   - Delete Card
 
-* The deck is then shared as Anon and viewed in an Icognito browser.
+#### Test 2
+  - Open an Anon Link from another Account
+  - Open Card
+
+
 
 * If it passes all this it then get's deployed and the coder is informed on Slack. If not then errors are passed back to the coder on Slack and the pull request is refused.
 
