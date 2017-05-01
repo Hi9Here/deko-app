@@ -18,6 +18,7 @@ Due to the nature of Polymer and Firebase it is extreamly difficult to do end to
 #### Test 1
   - Login
   - View Deck
+  - Navigate Decks
   - Add Card Title and Description
   - Add Image
   - Title and Description in Card View
