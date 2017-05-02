@@ -21,6 +21,7 @@ Due to the nature of Polymer and Firebase it is extreamly difficult to do end to
   - Navigate Decks
   - Add Card Title and Description
   - Add Image
+  - Card Appears in Deck View
   - Title and Description in Card View
   - Edit Image
   - Image has changed in Card View before returning from Deck View
