@@ -33,11 +33,14 @@ Due to the nature of Polymer and Firebase it is extreamly difficult to do end to
   - Text Changed in View
   - Text Stays Changed Returning from Deck View
   - Delete Card
-
-#### Test 2
   - Open an Anon Link from another Account
 
 
-
 * If it passes all this it then get's deployed and the coder is informed on Slack. If not then errors are passed back to the coder on Slack and the pull request is refused.
+
+### Deploy
+
+* Delete Bower Components Directory
+* Bower Install
+
 
