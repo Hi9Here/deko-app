@@ -13,7 +13,9 @@
     <link rel="import" href="/bower_components/app-route/app-location.html">
     <link rel="import" href="/bower_components/app-route/app-route.html">
     <link rel="import" href="/bower_components/firebase-ui-auth/firebase-ui-auth.html">
-    <script src="/bower_components/firebase/firebase.js"></script>
+    <script src="/bower_components/firebase/firebase-app.js"></script>
+    <script src="/bower_components/firebase/firebase-auth.js"></script>
+    <script src="/bower_components/firebase/firebase-database.js"></script>
     <script>
       // Initialize Firebase
       var config = {
@@ -23,7 +25,11 @@
         storageBucket: "cards-edb54.appspot.com",
         messagingSenderId: "526439963818"
       }
-      firebase.initializeApp(config)
+      if (firebase.apps.length == 0) {
+        firebase.initializeApp(config)
+      } else {
+        console.log("loaded app already")
+      }
     </script>
     <style>
       html, body {
