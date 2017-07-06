@@ -7,15 +7,15 @@
     <title>Deko</title>
     <meta name="theme-color" content="#fff">
     <link rel="manifest" href="/manifest.json">
+    <script src="/bower_components/firebase/firebase-app.js"></script>
+    <script src="/bower_components/firebase/firebase-auth.js"></script>
+    <script src="/bower_components/firebase/firebase-database.js"></script>
     <script src="/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
     <link rel="import" href="/bower_components/deko-page/deko-page.html">
     <link rel="import" href="/bower_components/iron-image/iron-image.html">
     <link rel="import" href="/bower_components/app-route/app-location.html">
     <link rel="import" href="/bower_components/app-route/app-route.html">
     <link rel="import" href="/bower_components/firebase-ui-auth/firebase-ui-auth.html">
-    <script src="/bower_components/firebase/firebase-app.js"></script>
-    <script src="/bower_components/firebase/firebase-auth.js"></script>
-    <script src="/bower_components/firebase/firebase-database.js"></script>
     <script>
       // Initialize Firebase
       var config = {
@@ -25,10 +25,12 @@
         storageBucket: "cards-edb54.appspot.com",
         messagingSenderId: "526439963818"
       }
-      if (firebase.apps.length == 0) {
+      try {
         firebase.initializeApp(config)
-      } else {
-        console.log("loaded app already")
+      }
+      catch (e) {
+       console.log(e)
+       window.location.reload()
       }
     </script>
     <style>
@@ -42,7 +44,8 @@
     <template is="dom-bind" id="app">
       <app-location route="{{route}}"></app-location>
       <app-route route="{{route}}" pattern="/:deck" data="{{data}}"></app-route>
-      <deko-page user="[[user]]" on-logout="logout" on-login="login" url-deck="{{data.deck}}" >
+      <app-route route="{{route}}" pattern="/:profile/:deck" data="{{data}}"></app-route>
+      <deko-page user="[[user]]" on-logout="logout" on-login="login" url-deck="{{data.deck}}" url-profile="{{data.profile}}" >
         <login-page>
           <img src="/deko-150.png"/>
           <firebase-ui-auth id="auth" user="{{user}}" photo="{{user.imageUrl}}" sign-in-success-url="" sign-in='["GoogleAuthProvider","EmailAuthProvider","Anonymous"]'></firebase-ui-auth>
