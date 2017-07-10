@@ -48,7 +48,7 @@
       <deko-page user="[[user]]" on-logout="logout" on-login="login" url-deck="{{deck}}" url-profile="{{profile}}" >
         <login-page>
           <img src="/deko-150.png"/>
-          <firebase-ui-auth id="auth" user="{{user}}" photo="{{user.imageUrl}}" sign-in-success-url="" sign-in='["GoogleAuthProvider","EmailAuthProvider","Anonymous"]'></firebase-ui-auth>
+          <firebase-ui-auth bugfix id="auth" user="{{user}}" photo="{{user.imageUrl}}" sign-in-success-url="" sign-in='["GoogleAuthProvider","EmailAuthProvider","Anonymous"]'></firebase-ui-auth>
         </login-page>
       </deko-page>
     </template>
@@ -97,26 +97,17 @@
             } 
           }
         }
-        app.addRoute = function(profile, deck, item){
+        app.addRoute = function(profile, deck){
+
           if (profile && this.route.path === "/") {
             this.route.path = "/" + profile + "/"
-          } else {
-            var path = "/" + profile + "/" 
-            if (deck) {
-              path = path + deck + "/" 
-            }
+          }
+          
+          if (profile && deck && this.route.path === "/" + profile + "/" ) {
+            var path = "/" + profile + "/" + deck + "/"
             if (this.route && this.route.path && this.route.path !== path) {
               this.route.path = path
               this.set("route", JSON.parse(JSON.stringify(this.route)) )
-            }
-            if (profile && profile !== this.profile) {
-              this.profile = profile
-            }
-            if (deck && deck !== this.deck) {
-              this.deck = deck
-            }
-            if (item && item !== this.item) {
-              this.item = item
             }
           }
         }
