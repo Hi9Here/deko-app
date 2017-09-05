@@ -30,12 +30,12 @@
     "paper-fab": "PolymerElements/paper-fab#^1.2.1",
     "paper-styles": "1.1.5",
     "app-route": "PolymerElements/app-route#~0.9.3",
-    "polymer": "1.9.1"
+    "polymer": "1.9.3"
   },
   "resolutions": {
     "iron-a11y-keys-behavior": "~1.0.5",
     "firebase": "^4.0.0",
-    "polymer": "1.9.1",
+    "polymer": "~1.9.3",
     "paper-icon-button": "^1.0.0",
     "inbox-search": "45e40c4300",
     "paper-item": "^1.0.0",
@@ -43,6 +43,7 @@
     "test-fixture": "^3.0.0-rc.1",
     "paper-styles": "^1.2.0",
     "polymer-quill": "two-way-data",
-    "webcomponentsjs": "^0.7.24"
+    "webcomponentsjs": "^0.7.24",
+    "iron-selector": "^1.5.2"
   }
 }

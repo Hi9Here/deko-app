@@ -48,8 +48,10 @@
       <deko-page user="[[user]]" on-logout="logout" on-login="login" url-deck="{{deck}}" url-profile="{{profile}}" >
         <login-page>
           <img src="/deko-150.png"/>
-          <firebase-ui-auth bugfix id="auth" user="{{user}}" photo="{{user.imageUrl}}" sign-in-success-url="" sign-in='["GoogleAuthProvider","EmailAuthProvider","Anonymous"]'></firebase-ui-auth>
+          <firebase-ui-auth bugfix id="auth" user="{{user}}" photo="{{user.imageUrl}}" sign-in-success-url="" sign-in='["GoogleAuthProvider","EmailAuthProvider"]'></firebase-ui-auth>
         </login-page>
+        <!-- <template is="dom-if" if="[[!user]]"> -->
+        <!-- </template> -->
       </deko-page>
     </template>
   </body>
@@ -99,7 +101,7 @@
         }
         app.addRoute = function(profile, deck){
 
-          if (profile && this.route.path === "/") {
+          if (profile && this.route.path === "/" || !this.route.path.startsWith("/" + profile + "/")) {
             this.route.path = "/" + profile + "/"
           }
           
