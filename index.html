@@ -7,24 +7,23 @@
     <title>Deko</title>
     <meta name="theme-color" content="#fff">
     <link rel="manifest" href="/manifest.json">
-    <script src="/bower_components/firebase/firebase-app.js"></script>
-    <script src="/bower_components/firebase/firebase-auth.js"></script>
-    <script src="/bower_components/firebase/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.1.2/firebase.js"></script>
+    <script src="/f.js"></script>
     <script src="/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
     <link rel="import" href="/bower_components/deko-page/deko-page.html">
-    <link rel="import" href="/bower_components/iron-image/iron-image.html">
     <link rel="import" href="/bower_components/app-route/app-location.html">
-    <link rel="import" href="/bower_components/app-route/app-route.html">
     <link rel="import" href="/bower_components/firebase-ui-auth/firebase-ui-auth.html">
+
     <script>
-      // Initialize Firebase
       var config = {
-        apiKey: "AIzaSyBT79W2ppUbnhG1cznsy7X12LY4XuJ9SwU",
-        authDomain: "cards-edb54.firebaseapp.com",
-        databaseURL: "https://cards-edb54.firebaseio.com",
-        storageBucket: "cards-edb54.appspot.com",
-        messagingSenderId: "526439963818"
+        apiKey: "AIzaSyD5WIbELl1J5l4GUud1BudtKSHFR0MiCZM",
+        authDomain: "deko-e14bc.firebaseapp.com",
+        databaseURL: "https://deko-e14bc.firebaseio.com",
+        projectId: "deko-e14bc",
+        storageBucket: "deko-e14bc.appspot.com",
+        messagingSenderId: "625918914155"
       }
+      // Initialize Firebase
       try {
         firebase.initializeApp(config)
       }
@@ -43,86 +42,17 @@
   <body>
     <template is="dom-bind" id="app">
       <app-location route="{{route}}"></app-location>
-      <app-route route="{{route}}" pattern="/:profile" data="{{data}}"></app-route>
-      <app-route route="{{route}}" pattern="/:profile/:deck" data="{{data2}}"></app-route>
-      <deko-page user="[[user]]" on-logout="logout" on-login="login" url-deck="{{deck}}" url-profile="{{profile}}" >
-        <login-page>
-          <img src="/deko-150.png"/>
-          <firebase-ui-auth bugfix id="auth" user="{{user}}" photo="{{user.imageUrl}}" sign-in-success-url="" sign-in='["GoogleAuthProvider","EmailAuthProvider"]'></firebase-ui-auth>
-        </login-page>
-        <!-- <template is="dom-if" if="[[!user]]"> -->
-        <!-- </template> -->
+      <deko-page user="[[user]]" on-logout="logout" on-login="login" route="{{route}}" search="{{search}}">
+        <img src="/deko-150.png"/>
+        <firebase-ui-auth bugfix id="auth" user="{{user}}" photo="{{user.imageUrl}}" sign-in-success-url="" sign-in='["GoogleAuthProvider","EmailAuthProvider"]'></firebase-ui-auth>
       </deko-page>
     </template>
   </body>
   <script>
-   var app = document.querySelector('#app')
-        app.properties = {
-          data:{
-            value: {
-              profile: "",
-              deck: "",
-            }
-          },
-          data2:{
-            value: {
-              profile: "",
-              deck: "",
-            }
-          },
-          _profile: {
-            computed:"getProfile(data.profile, data2.profile, user.uid)"
-          },
-          _deck: {
-            computed:"getdeck(data.deck, data2.deck)"
-          },
-          _setRoute:{
-            computed:"setRoute(route.path)"
-          },
-          _route: {
-            computed:"addRoute(profile)"
-          },
-          __route: {
-            computed:"addRoute(profile, deck)"
-          },
-          _urlParams:{
-            computed:"setUrlParams(urlParams)"
-          },
-        }
-        app.setRoute = function(path) {
-          if (path) {
-            if (path.split("/")[1] && path.split("/")[1] !== this.profile ) {
-              this.profile = path.split("/")[1]
-            } 
-            if (path.split("/")[2] && path.split("/")[2] !== this.deck ) {
-              this.deck = path.split("/")[2]
-            } 
-          }
-        }
-        app.addRoute = function(profile, deck){
-
-          if (profile && this.route.path === "/" || !this.route.path.startsWith("/" + profile + "/")) {
-            this.route.path = "/" + profile + "/"
-          }
-          
-          if (profile && deck && this.route.path === "/" + profile + "/" ) {
-            var path = "/" + profile + "/" + deck + "/"
-            if (this.route && this.route.path && this.route.path !== path) {
-              this.route.path = path
-              this.set("route", JSON.parse(JSON.stringify(this.route)) )
-            }
-          }
-        }
-        app.getProfile = function(profile, profile2, uid){
-          // get profile now
-          return "loading"
-        }
-        app.getDeck = function(deck, deck2){   
-          if (this.deck !== deck && this.deck !== deck2 && this.deck !== deck3 && this.deck !== "") {
-            this.deck = deck || deck2 || deck3 || ""
-          }
-        }
-   app.logout = function() { app.$.auth.signOut() }
-   app.login = function() { app.$.auth.trySignIn() }
+    var _0x6bb7=["\x66\x69\x72\x65\x73\x74\x6F\x72\x65"];
+    var db = firebase[_0x6bb7[0]]()
+    var app = document.querySelector('#app')
+    app.logout = function() { app.$.auth.signOut() }
+    app.login = function() { app.$.auth.trySignIn() }
   </script>
 </html>

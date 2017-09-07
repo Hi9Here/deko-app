@@ -44,6 +44,7 @@
     "paper-styles": "^1.2.0",
     "polymer-quill": "two-way-data",
     "webcomponentsjs": "^0.7.24",
-    "iron-selector": "^1.5.2"
+    "iron-selector": "^1.5.2",
+    "app-route": "~1.0.1"
   }
 }
