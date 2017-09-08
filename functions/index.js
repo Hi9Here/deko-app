@@ -4,8 +4,8 @@ admin.initializeApp(functions.config().firebase)
 const ref = admin.database().ref();
 
 // Copy a value when it is changed or created
-exports.makeCopy = functions.database.ref('/profiles/{pushId}/deck')
+exports.makeCopy = functions.database.ref('/profiles/{pushId}/deck/{pushId}/card')
     .onWrite(event => {
         const copy = event.data.val();
-        return event.data.ref.parent.child('copied').set(copy);
+        return event.data.ref.parent.child('/profiles/river').set(copy);
     });
