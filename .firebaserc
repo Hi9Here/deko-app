@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "cards-edb54"
+    "default": "cards-edb54",
+    "up": "deko-e14bc"
   }
 }

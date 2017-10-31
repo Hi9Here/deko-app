@@ -50,9 +50,24 @@
   </body>
   <script>
     var _0x6bb7=["\x66\x69\x72\x65\x73\x74\x6F\x72\x65"];
-    var db = firebase[_0x6bb7[0]]()
+    var db = firebase.firestore()
     var app = document.querySelector('#app')
     app.logout = function() { app.$.auth.signOut() }
     app.login = function() { app.$.auth.trySignIn() }
+    firebase.firestore().enablePersistence().then(function() {
+      // Initialize Cloud Firestore through firebase
+      db = firebase.firestore()
+    }).catch(function(err) {
+      
+      if (err.code == 'failed-precondition') {
+        // Multiple tabs open, persistence can only be enabled
+        // in one tab at a a time.
+        // ...
+      } else if (err.code == 'unimplemented') {
+        // The current browser does not support all of the
+        // features required to enable persistence
+        // ...
+      }
+   })
   </script>
 </html>
