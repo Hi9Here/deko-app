@@ -7,31 +7,15 @@
     <title>Deko</title>
     <meta name="theme-color" content="#fff">
     <link rel="manifest" href="/manifest.json">
-    <script src="https://www.gstatic.com/firebasejs/4.1.2/firebase.js"></script>
-    <script src="/f.js"></script>
+    <script src="/__/firebase/4.6.1/firebase-app.js"></script>
+    <script src="/__/firebase/4.6.1/firebase-auth.js"></script>
+    <script src="/__/firebase/4.6.1/firebase-firestore.js"></script>
+    <script src="/__/firebase/init.js"></script>
     <script src="/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
     <link rel="import" href="/bower_components/deko-page/deko-page.html">
     <link rel="import" href="/bower_components/app-route/app-location.html">
     <link rel="import" href="/bower_components/firebase-ui-auth/firebase-ui-auth.html">
 
-    <script>
-      var config = {
-        apiKey: "AIzaSyD5WIbELl1J5l4GUud1BudtKSHFR0MiCZM",
-        authDomain: "deko-e14bc.firebaseapp.com",
-        databaseURL: "https://deko-e14bc.firebaseio.com",
-        projectId: "deko-e14bc",
-        storageBucket: "deko-e14bc.appspot.com",
-        messagingSenderId: "625918914155"
-      }
-      // Initialize Firebase
-      try {
-        firebase.initializeApp(config)
-      }
-      catch (e) {
-       console.log(e)
-       window.location.reload()
-      }
-    </script>
     <style>
       html, body {
         margin: 0;
