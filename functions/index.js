@@ -1,12 +1,36 @@
 const functions = require('firebase-functions');
-const firestore = require('firebase-functions/lib/providers/datastore');
-const admin = require('firebase-admin')
-admin.initializeApp(functions.config().firebase)
-const ref = admin.database().ref();
+const express = require("express")
+const Twig = require("twig")
+const admin = require("firebase-admin")
+admin.initializeApp(functions.config().firebase);
 
-// Copy a value when it is changed or created
-exports.makeCopy = functions.database.ref('/profiles/{anyDocument}/deks/{anyDocument}/cards/{anyDocument}')
-    .onWrite(event => {
-        const copy = event.data.val();
-        return event.data.ref.parent.child('/profiles/river').set(copy);
-    });
+var db = admin.firestore();
+
+const app = express()
+var api1 = functions.https.onRequest(app)
+/* Express */
+
+app.use(express.static('files'))
+
+app.set("twig options", {
+  strict_variables: false
+})
+
+app.get('/users', function(req, res){
+  res.setHeader('Content-Type', 'application/json');
+  db.collection('Users').get().then(snapshot => {
+    var users = []
+    snapshot.forEach(doc => {
+      users.push(doc.data().details)
+      console.log(doc.id, '=>', doc.data())
+    })
+    res.json(users)
+  }).catch(e => {
+    console.log(e)
+  })
+})
+
+app.use('/static', express.static('../public'))
+module.exports = {
+  api1,
+}
