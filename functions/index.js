@@ -71,7 +71,16 @@ app.get('/card/:profileid/:cardid', function(req, res) {
                     // cardStuff.pak = 1
                 const givenCard = cardStuff
                 givenArray.forEach(givenToProfileID => {
-                    db.collection('Profiles').doc(givenToProfileID).collection('cards').add(givenCard)
+                    db.collection('Profiles').doc(givenToProfileID).collection('cards').add(givenCard).then(ref => {
+                        Object.keys(cardStuff.triks).forEach(trik => {
+                            cardRef.collection(trik).orderBy("time", "desc").limit(1).get().then(cardTrikRef => {
+                                console.log('data is, ', cardTrikRef)
+                                ref.collection(trik).add(cardTrikRef.docs[0].data())
+                            }).catch(e => {
+                                console.log(e)
+                            })
+                        })
+                    })
                 })
                 console.log("Card Data:", cardStuff, 'and givenarray is', givenArray)
             } else {
