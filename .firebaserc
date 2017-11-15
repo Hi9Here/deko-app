@@ -1,6 +1,7 @@
 {
   "projects": {
-    "default": "cards-edb54",
-    "up": "deko-app-one"
+    "default": "deko-app-one",
+    "up": "deko-app-one",
+    "dev": "deko-app-one"
   }
 }
