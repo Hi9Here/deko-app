@@ -1,0 +1,123 @@
+
+        $(function(){
+          if ($('textarea').val() === "") {
+            alert("{{first}}")
+          }
+
+          colour_array = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "i", "S", "E", "G", "Y"];
+
+          shuffle(colour_array);
+
+          function createFields() {
+            $('.field').remove();
+            var container = $('#container');
+            for (var i = 0; i < +15; i++) {
+              $('<div/>', {
+                'class': 'field c' + colour_array[i],
+              }).click(function () {
+                var letter = $(this).attr('class').replace('field c', '')
+                $('textarea').val($('textarea').val() + letter);
+                $(this).remove();
+                distributeFields();
+                if ($('.field').length == 1) {
+                  var lastLetter = $('.field').attr('class').replace('field c', '')
+                  $('textarea').val($('textarea').val() + lastLetter + '\n')
+                  shuffle(colour_array)
+                  createFields()
+                  distributeFields()
+                  if ($('textarea').val().split('\n').length > 5 && performance.now() > 84000) {
+                    var add = document.getElementById('colour').value.replace( /\n/g , " ") 
+                    var sets = add.split(" ")
+                    var index
+                    var place
+                    var moving = {}
+                    for (index = 0; index < sets.length; ++index) {
+                      for (place = 0; place < sets[index].length; ++place) {
+                        if (moving[sets[index][place]]) {
+                          moving[sets[index][place]] += " " + place
+                        } else {
+                          moving[sets[index][place]] = place 
+                        }
+                      }
+                    }
+                    var movings = 0
+                    for (places in moving) {
+                      var thePlaces = moving[places]
+                      if (+thePlaces != thePlaces) {
+                        movings += thePlaces.split(" ").reduce(function(max, value) {
+                          return Math.max(max, value)
+                        }, 0) - thePlaces.split(" ").reduce(function(min, value) {
+                          return Math.min(min, value)
+                        }, 15)
+                      }
+                    }
+
+                    firebase.firestore().collection("Picks").add({
+                      colours: add,
+                      time: Date.now(),
+                      timepicking: performance.now(),
+                      movings: movings,
+                    })
+                    console.log(movings)
+
+                    if (movings > 1200 || sets.length > 20) {
+                      alert("Thank you for testing the colour pick picker\n resetting ...")
+                      $('textarea').val("")
+                    } else {
+                      if (confirm("Thank you for taking the time to pick your colours. would you like to email them to me so I can give you a reading?")){
+                        var link = "mailto:andipandi666@gmail.com?subject=I would like a mind blowing insigh.&body=here in my picks - " 
+                        window.location.href = link + add
+                      }
+                    }
+                  }
+                }
+              }).appendTo(container)
+            }
+          }
+
+          function distributeFields() {
+            var radius = 200;
+            var fields = $('.field'),
+            container = $('#container'),
+            width = container.width(),
+            height = container.height(),
+            angle = 0,
+            step = (2 * Math.PI) / fields.length;
+            fields.each(function () {
+            var x = Math.round(width / 2 + radius * Math.cos(angle) - $(this).width() / 2);
+            var y = Math.round(height / 2 + radius * Math.sin(angle) - $(this).height() / 2);
+            $(this).css({
+              left: x + 'px',
+              top: y + 'px',
+              height: (220 - (fields.length * 10)) + 'px',
+              width: (220 - (fields.length * 10)) + 'px',
+              borderRadius: (220 - (fields.length * 10)) / 2 + 'px',
+           });
+           angle += step;
+         });
+       }
+
+       createFields();
+       distributeFields();
+
+       var $container = $("div.container");
+
+       function shuffle(array) {
+         var m = array.length, t, i;
+
+         // While there remain elements to shuffle…
+         while (m) {
+
+           // Pick a remaining element…
+           i = Math.floor(Math.random() * m--);
+
+           // And swap it with the current element.
+           t = array[m];
+           array[m] = array[i];
+           array[i] = t;
+         }
+
+         return array;
+       }
+     });
+    
