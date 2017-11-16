@@ -205,3 +205,7 @@ app.use('/static', express.static('../public'))
 module.exports = {
   god,
 }
+
+// IMAGE RESIZING FUNCTION
+
+// END OF IMAGE RESIZING FUNCTION
