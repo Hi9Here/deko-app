@@ -2,7 +2,91 @@ const functions = require('firebase-functions');
 const express = require("express")
 const Twig = require("twig")
 const admin = require("firebase-admin")
+
+// Modules that get used in image resizing
+const gcs = require('@google-cloud/storage')();
+const spawn = require('child-process-promise').spawn;
+
+// Initialize the app
 admin.initializeApp(functions.config().firebase);
+
+// IMAGE RESIZING FUNCTION
+exports.imageResizer = functions.storage.object()
+  .onChange(event => {
+    // Get all the object meta data of what has changed
+    // event.data [ObjectMetaData] properties used are
+    // bucket name contentType resourceState
+    // Bucket is storage bucket for the object
+    // name is it's path in storage
+    // contentType is the content type (image, audio, text...)
+    // resourceState is either 'exists' | 'not_exists'
+    const fileMeta = event.data;
+    // Store objects file path
+    const filePath = fileMeta.name;
+    // Store fileName by getting the last string after / symbol
+    const fileName = filePath.split('/').pop();
+    // This is where the storage change occurs
+    const fileBucket = fileMeta.bucket;
+    // Reference to the file bucket with Google Cloud storage API
+    const bucket = gcs.bucket(fileBucket);
+    // Make a string with a temporary file stored locally on the Cloud Functions instance to hold the image while being modified
+    const tempFilePath = `/tmp/${fileName}`
+
+    // This stops the look
+    if (fileName.startsWith('mob_')) {
+      console.log('Already a mobile image')
+      return
+    }
+
+    // So we check with contentType that this is an image. (As Above)
+    if (!fileMeta.contentType.startsWith('image/')) {
+      console.log('There is no image')
+      return
+    }
+
+    // We check next to resourceState to wether is exists or not. (As Above). Someone might delete it as the function is firing
+    if (fileMeta.resourceState === 'not exists') {
+      console.log('This is a deletion event')
+      return
+    }
+
+    // Download Storage object that has changed
+    return bucket.file(filePath).download({
+        // Download to temporary file
+        destination: tempFilePath
+      })
+      // Now resize with ImageMagik. Add mobile to the end to rename it
+      // spawn converts the ImageMagik convert cli 
+      // then returns a promise when coversion completes
+      .then(() => {
+        console.log('Image downloaded locally to', tempFilePath)
+        return spawn('convert', [tempFilePath, '-mobile', '500x500>',
+          tempFilePath
+        ])
+      })
+      .catch(e => {
+        console.log(e)
+      })
+      // Store the image in a different location than the original. This also helps prevent infinite loops
+      .then(() => {
+        console.log('Mobile Image created')
+        const mobFilePath = filePath.replace(/(\/)?([^\/]*)$/,
+          '$1mob_$2')
+
+        // Upload new image into the newly created path in storage
+        return bucket.upload(tempFilePath, {
+          destination: mobFilePath
+        })
+      })
+      .catch(e => {
+        console.log(e)
+      })
+
+  })
+
+
+
+// END OF IMAGE RESIZING FUNCTION
 
 // This is the datastore
 var db = admin.firestore();
@@ -21,7 +105,7 @@ app.set("twig options", {
 })
 
 // USER FUNCTION
-// get the list of users and render them
+// get the list of users and render them. Add users at the end of the god function
 app.get('/users', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
     db.collection('Users').get().then(snapshot => {
@@ -38,7 +122,7 @@ app.get('/users', function(req, res) {
   // END OF USER FUNCTION
 
 // PROFILES FUNCTION
-//Get the name of the profiles and add to an array and render them
+//Get the name of the profiles and add to an array and render them. Add profiles at the end of the god function
 app.get('/profiles', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
     db.collection('Profiles').get().then(snapshot => {
@@ -201,11 +285,7 @@ app.get('/card/:profileid/:cardid', function(req, res) {
 
 })
 
-app.use('/static', express.static('../public'))
-module.exports = {
-  god,
-}
-
-// IMAGE RESIZING FUNCTION
-
-// END OF IMAGE RESIZING FUNCTION
+// app.use('/static', express.static('../public'))
+// module.exports = {
+//   god,
+// }
