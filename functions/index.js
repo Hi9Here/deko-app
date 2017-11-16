@@ -199,7 +199,6 @@ app.get('/card/:profileid/:cardid', function(req, res) {
       res.json({ error: error })
     });
 
-
 })
 
 app.use('/static', express.static('../public'))
