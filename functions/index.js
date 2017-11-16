@@ -6,87 +6,90 @@ const admin = require("firebase-admin")
 // Modules that get used in image resizing
 const gcs = require('@google-cloud/storage')();
 const spawn = require('child-process-promise').spawn;
+const path = require('path');
+const os = require('os');
+const fs = require('fs');
 
 // Initialize the app
 admin.initializeApp(functions.config().firebase);
 
-// IMAGE RESIZING FUNCTION
-exports.imageResizer = functions.storage.object()
-  .onChange(event => {
-    // Get all the object meta data of what has changed
-    // event.data [ObjectMetaData] properties used are
-    // bucket name contentType resourceState
-    // Bucket is storage bucket for the object
-    // name is it's path in storage
-    // contentType is the content type (image, audio, text...)
-    // resourceState is either 'exists' | 'not_exists'
-    const fileMeta = event.data;
-    // Store objects file path
-    const filePath = fileMeta.name;
-    // Store fileName by getting the last string after / symbol
-    const fileName = filePath.split('/').pop();
-    // This is where the storage change occurs
-    const fileBucket = fileMeta.bucket;
-    // Reference to the file bucket with Google Cloud storage API
-    const bucket = gcs.bucket(fileBucket);
-    // Make a string with a temporary file stored locally on the Cloud Functions instance to hold the image while being modified
-    const tempFilePath = `/tmp/${fileName}`
+// NEW IMAGE RESIZER
 
-    // This stops the look
-    if (fileName.startsWith('mob_')) {
-      console.log('Already a mobile image')
-      return
-    }
-
-    // So we check with contentType that this is an image. (As Above)
-    if (!fileMeta.contentType.startsWith('image/')) {
-      console.log('There is no image')
-      return
-    }
-
-    // We check next to resourceState to wether is exists or not. (As Above). Someone might delete it as the function is firing
-    if (fileMeta.resourceState === 'not exists') {
-      console.log('This is a deletion event')
-      return
-    }
-
-    // Download Storage object that has changed
-    return bucket.file(filePath).download({
-        // Download to temporary file
-        destination: tempFilePath
-      })
-      // Now resize with ImageMagik. Add mobile to the end to rename it
-      // spawn converts the ImageMagik convert cli 
-      // then returns a promise when coversion completes
-      .then(() => {
-        console.log('Image downloaded locally to', tempFilePath)
-        return spawn('convert', [tempFilePath, '-mobile', '500x500>',
-          tempFilePath
-        ])
-      })
-      .catch(e => {
-        console.log(e)
-      })
-      // Store the image in a different location than the original. This also helps prevent infinite loops
-      .then(() => {
-        console.log('Mobile Image created')
-        const mobFilePath = filePath.replace(/(\/)?([^\/]*)$/,
-          '$1mob_$2')
-
-        // Upload new image into the newly created path in storage
-        return bucket.upload(tempFilePath, {
-          destination: mobFilePath
-        })
-      })
-      .catch(e => {
-        console.log(e)
-      })
-
-  })
+'use strict';
 
 
+// [START generateThumbnail]
+/**
+ * When an image is uploaded in the Storage bucket We generate a thumbnail automatically using
+ * ImageMagick.
+ */
+// [START generateThumbnailTrigger]
+exports.generateThumbnail = functions.storage.object().onChange(event => {
+  // [END generateThumbnailTrigger]
+  // [START eventAttributes]
+  const object = event.data; // The Storage object.
 
-// END OF IMAGE RESIZING FUNCTION
+  const fileBucket = object.bucket; // The Storage bucket that contains the file.
+  const filePath = object.name; // File path in the bucket.
+  const contentType = object.contentType; // File content type.
+  const resourceState = object.resourceState; // The resourceState is 'exists' or 'not_exists' (for file/folder deletions).
+  const metageneration = object.metageneration; // Number of times metadata has been generated. New objects have a value of 1.
+  // [END eventAttributes]
+
+  // [START stopConditions]
+  // Exit if this is triggered on a file that is not an image.
+  if (!contentType.startsWith('image/')) {
+    console.log('This is not an image.');
+    return;
+  }
+
+  // Get the file name.
+  const fileName = path.basename(filePath);
+  // Exit if the image is already a thumbnail.
+  if (fileName.startsWith('thumb_')) {
+    console.log('Already a Thumbnail.');
+    return;
+  }
+
+  // Exit if this is a move or deletion event.
+  if (resourceState === 'not_exists') {
+    console.log('This is a deletion event.');
+    return;
+  }
+
+  // Exit if file exists but is not new and is only being triggered
+  // because of a metadata change.
+  if (resourceState === 'exists' && metageneration > 1) {
+    console.log('This is a metadata change event.');
+    return;
+  }
+  // [END stopConditions]
+
+  // [START thumbnailGeneration]
+  // Download file from bucket.
+  const bucket = gcs.bucket(fileBucket);
+  const tempFilePath = path.join(os.tmpdir(), fileName);
+  return bucket.file(filePath).download({
+    destination: tempFilePath
+  }).then(() => {
+    console.log('Image downloaded locally to', tempFilePath);
+    // Generate a thumbnail using ImageMagick.
+    return spawn('convert', [tempFilePath, '-thumbnail', '200x200>', tempFilePath]);
+  }).then(() => {
+    console.log('Thumbnail created at', tempFilePath);
+    // We add a 'thumb_' prefix to thumbnails file name. That's where we'll upload the thumbnail.
+    const thumbFileName = `thumb_${fileName}`;
+    const thumbFilePath = path.join(path.dirname(filePath), thumbFileName);
+    // Uploading the thumbnail.
+    return bucket.upload(tempFilePath, { destination: thumbFilePath });
+    // Once the thumbnail has been uploaded delete the local file to free up disk space.
+  }).then(() => fs.unlinkSync(tempFilePath));
+  // [END thumbnailGeneration]
+});
+// [END generateThumbnail]
+// END OF NEW IMAGE RESIZER
+
+// // END OF IMAGE RESIZING FUNCTION
 
 // This is the datastore
 var db = admin.firestore();
