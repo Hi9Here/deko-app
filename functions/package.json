@@ -2,14 +2,15 @@
   "name": "functions",
   "description": "dekos functions",
   "dependencies": {
+    "@google-cloud/storage": "^1.4.0",
+    "child-process-promise": "^2.2.0",
     "express": "^4.16.2",
     "firebase-admin": "^5.4.3",
     "firebase-functions": "^0.7.0",
-    "twig": "^1.10.5",
-    "@google-cloud/storage": "^1.4.0",
-    "child-process-promise": "^2.2.0",
     "mkdirp": "^0.5.1",
-    "mkdirp-promise": "^4.0.0"
+    "mkdirp-promise": "^4.0.0",
+    "node-cloud-vision-api": "^0.2.0",
+    "twig": "^1.10.5"
   },
   "private": true
 }
