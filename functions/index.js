@@ -9,10 +9,13 @@ const spawn = require('child-process-promise').spawn;
 const path = require('path');
 const os = require('os');
 const fs = require('fs');
+const vision = require('node-cloud-vision-api')
 
 // Initialize the app
 admin.initializeApp(functions.config().firebase);
 
+// This is the datastore
+const db = admin.firestore()
 // NEW IMAGE RESIZER
 
 'use strict';
@@ -24,7 +27,7 @@ admin.initializeApp(functions.config().firebase);
  * ImageMagick.
  */
 // [START generateThumbnailTrigger]
-exports.generateThumbnail = functions.storage.object().onChange(event => {
+const generateThumbnail = functions.storage.object().onChange(event => {
   // [END generateThumbnailTrigger]
   // [START eventAttributes]
   const object = event.data; // The Storage object.
@@ -39,60 +42,86 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
   // [START stopConditions]
   // Exit if this is triggered on a file that is not an image.
   if (!contentType.startsWith('image/')) {
-    console.log('This is not an image.');
-    return;
+    console.log('This is not an image.')
+    return
   }
 
   // Get the file name.
   const fileName = path.basename(filePath);
   // Exit if the image is already a thumbnail.
   if (fileName.startsWith('thumb_')) {
-    console.log('Already a Thumbnail.');
-    return;
+    console.log('Already a Thumbnail.')
+    return 1
   }
 
   // Exit if this is a move or deletion event.
   if (resourceState === 'not_exists') {
-    console.log('This is a deletion event.');
-    return;
+    console.log('This is a deletion event.')
+    return 2
   }
 
   // Exit if file exists but is not new and is only being triggered
   // because of a metadata change.
   if (resourceState === 'exists' && metageneration > 1) {
-    console.log('This is a metadata change event.');
-    return;
+    console.log('This is a metadata change event.')
+    return 3
   }
   // [END stopConditions]
 
   // [START thumbnailGeneration]
   // Download file from bucket.
-  const bucket = gcs.bucket(fileBucket);
-  const tempFilePath = path.join(os.tmpdir(), fileName);
+  const bucket = gcs.bucket(fileBucket)
+  const tempFilePath = path.join(os.tmpdir(), fileName)
   return bucket.file(filePath).download({
     destination: tempFilePath
   }).then(() => {
-    console.log('Image downloaded locally to', tempFilePath);
+    console.log('Image downloaded locally to', tempFilePath)
     // Generate a thumbnail using ImageMagick.
-    return spawn('convert', [tempFilePath, '-thumbnail', '200x200>', tempFilePath]);
+    return spawn('convert', [tempFilePath, '-thumbnail', '500x500>', tempFilePath])
   }).then(() => {
-    console.log('Thumbnail created at', tempFilePath);
+    console.log('Thumbnail created at', tempFilePath)
+     tempFilePath 
     // We add a 'thumb_' prefix to thumbnails file name. That's where we'll upload the thumbnail.
     const thumbFileName = `thumb_${fileName}`;
     const thumbFilePath = path.join(path.dirname(filePath), thumbFileName);
+    vision.init({auth: 'AIzaSyCKbNZem3UKzkWy8NST2Al7gKWpAXFduWU'})
+
+    // construct parameters
+    const reqV = new vision.Request({
+      image: new vision.Image(tempFilePath),
+      features: [
+    //    new vision.Feature('FACE_DETECTION', 4),
+        new vision.Feature('LABEL_DETECTION', 10),
+      ]
+    })
+
+    // send single request
+    vision.annotate(reqV).then((resV) => {
+      // handling response
+      console.log(JSON.stringify(resV.responses))
+      console.log(filePath)
+      var uid = filePath.split("/")[0]
+      var hash = filePath.split("/")[1]
+      var theHash = {}
+      theHash[hash] = true
+
+      db.collection("Users").doc(uid).set({files: theHash}, {merge: true})
+      db.collection("files").doc(hash).set({vision: resV.responses}, {merge: true})
+
+    }, (e) => {
+      console.log('Error: ', e)
+    }) 
     // Uploading the thumbnail.
-    return bucket.upload(tempFilePath, { destination: thumbFilePath });
+    return bucket.upload(tempFilePath, { destination: thumbFilePath })
     // Once the thumbnail has been uploaded delete the local file to free up disk space.
-  }).then(() => fs.unlinkSync(tempFilePath));
+  }).then(() => fs.unlinkSync(tempFilePath))
   // [END thumbnailGeneration]
-});
+})
 // [END generateThumbnail]
 // END OF NEW IMAGE RESIZER
 
 // // END OF IMAGE RESIZING FUNCTION
 
-// This is the datastore
-var db = admin.firestore();
 
 const app = express()
 
@@ -154,7 +183,7 @@ function deleteCollection(dbs, collectionPath, batchSize) {
 
   return new Promise((resolve, reject) => {
     deleteQueryBatch(dbs, query, batchSize, resolve, reject);
-  });
+  })
 }
 
 function deleteQueryBatch(dbs, query, batchSize, resolve, reject) {
@@ -162,29 +191,29 @@ function deleteQueryBatch(dbs, query, batchSize, resolve, reject) {
     .then((snapshot) => {
       // When there are no documents left, we are done
       if (snapshot.size == 0) {
-        return 0;
+        return 0
       }
 
       // Delete documents in a batch
-      var batch = dbs.batch();
+      var batch = dbs.batch()
       snapshot.docs.forEach((doc) => {
-        batch.delete(doc.ref);
-      });
+        batch.delete(doc.ref)
+      })
 
       return batch.commit().then(() => {
-        return snapshot.size;
-      });
+        return snapshot.size
+      })
     }).then((numDeleted) => {
       if (numDeleted === 0) {
-        resolve();
-        return;
+        resolve()
+        return
       }
 
       // Recurse on the next process tick, to avoid
       // exploding the stack.
       process.nextTick(() => {
         deleteQueryBatch(dbs, query, batchSize, resolve, reject);
-      });
+      })
     })
     .catch(reject);
 }
@@ -200,14 +229,14 @@ app.get('/card/:profileid/:cardid', function(req, res) {
   // This is so you can render JSON back
   res.setHeader('Content-Type', 'application/json');
   // Get ProfileID from the URL
-  const profileID = req.params.profileid;
-  console.log('profile id var is ', profileID);
+  const profileID = req.params.profileid
+  console.log('profile id var is ', profileID)
   // Get CardID from the URL
-  const cardID = req.params.cardid;
-  console.log('card id var is ', cardID);
+  const cardID = req.params.cardid
+  console.log('card id var is ', cardID)
 
   // This is the reference to the card with the ids you got from the URL
-  const cardRef = db.collection('Profiles').doc(profileID).collection('cards').doc(cardID);
+  const cardRef = db.collection('Profiles').doc(profileID).collection('cards').doc(cardID)
 
   // Get the Card Object from the reference
   cardRef.get()
@@ -276,7 +305,7 @@ app.get('/card/:profileid/:cardid', function(req, res) {
         }
         console.log("Card Data:", cardStuff, 'and givenarray is', givenArray)
       } else {
-        console.log("No such Card!");
+        console.log("No such Card!")
       }
       // Fire back JSON so that the client knows that it has worked
       res.json({ success: true })
@@ -284,11 +313,9 @@ app.get('/card/:profileid/:cardid', function(req, res) {
       console.log("Error getting Card:", error);
       // five back JSON to say there was an error
       res.json({ error: error })
-    });
+    })
 
 })
 
-// app.use('/static', express.static('../public'))
-// module.exports = {
-//   god,
-// }
+ app.use('/static', express.static('../public'))
+ module.exports = { god, generateThumbnail, }
