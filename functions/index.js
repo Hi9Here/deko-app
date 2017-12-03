@@ -5,6 +5,8 @@ const admin = require("firebase-admin")
 
 // Modules that get used in image resizing
 const gcs = require('@google-cloud/storage')();
+const language = require('@google-cloud/language');
+
 const spawn = require('child-process-promise').spawn;
 const path = require('path');
 const os = require('os');
@@ -121,7 +123,26 @@ const generateThumbnail = functions.storage.object().onChange(event => {
 // [END generateThumbnail]
 
 const app = express()
+const languageService = functions.database.ref('/Profiles/{pid}').onWrite(event => {
+  console.log(event.data.val(), event.params)
+  const text = 'Hello, world!'
 
+  const document = {
+    content: text,
+    type: 'PLAIN_TEXT',
+  }
+
+  // Detects the sentiment of the text
+  client.analyzeSentiment({document: document}).then(results => {
+    const sentiment = results[0].documentSentiment
+ 
+    console.log(`Text: ${text}`)
+    console.log(`Sentiment score: ${sentiment.score}`)
+    console.log(`Sentiment magnitude: ${sentiment.magnitude}`)
+  }).catch(err => {
+    console.error('ERROR:', err)
+  });
+})
 // Name of function that fires everytime a URL is passed to it. 
 // That way it keeps hot and will run faster
 var god = functions.https.onRequest(app)
@@ -315,4 +336,4 @@ app.get('/card/:profileid/:cardid', function(req, res) {
 })
 
  app.use('/static', express.static('../public'))
- module.exports = { god, generateThumbnail, }
+ module.exports = { god, generateThumbnail, languageService}
