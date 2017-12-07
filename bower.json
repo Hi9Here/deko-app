@@ -30,7 +30,7 @@
     "paper-fab": "PolymerElements/paper-fab#^1.2.1",
     "paper-styles": "1.1.5",
     "app-route": "PolymerElements/app-route#~0.9.3",
-    "polymer": "1.9.3",
+    "polymer": "^1.11.0",
     "paper-chip": "bendavis78/paper-chip#1.1.1",
     "give-card": "Hi9Here/give-card",
     "sets-reps": "Hi9Here/sets-reps"
@@ -38,7 +38,7 @@
   "resolutions": {
     "iron-a11y-keys-behavior": "~1.0.5",
     "firebase": "^4.0.0",
-    "polymer": "~1.10.0",
+    "polymer": "^1.11.0",
     "paper-icon-button": "^1.0.0",
     "inbox-search": "45e40c4300",
     "paper-item": "^1.0.0",
