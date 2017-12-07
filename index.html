@@ -1,57 +1,95 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
-    <meta name="description" content="Deko Makes the Web Simple. It's as easy as that'">
-    <title>Deko</title>
-    <meta name="theme-color" content="#fff">
-    <link rel="manifest" href="/manifest.json">
-    <script src="/__/firebase/4.6.2/firebase-app.js"></script>
-    <script src="/__/firebase/4.6.2/firebase-auth.js"></script>
-    <script src="/__/firebase/4.6.2/firebase-firestore.js"></script>
-    <script src="/__/firebase/4.6.2/firebase-storage.js"></script>
-    <script src="/__/firebase/init.js"></script>
-    <script src="/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
-    <link rel="import" href="/bower_components/deko-page/deko-page.html">
-    <link rel="import" href="/bower_components/app-route/app-location.html">
-    <link rel="import" href="/bower_components/firebase-ui-auth/firebase-ui-auth.html">
 
-    <style>
-      html, body {
-        margin: 0;
-        height: 100%;
-      }
-    </style>
-  </head>
-  <body>
-    <template is="dom-bind" id="app">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+  <meta name="description" content="Deko is an Assistant to Help you Progress in Life'">
+  <title>Deko</title>
+  <meta name="theme-color" content="#fff">
+  <link rel="manifest" href="/manifest.json">
+  <script src="/__/firebase/4.6.2/firebase-app.js"></script>
+  <script src="/__/firebase/4.6.2/firebase-auth.js"></script>
+  <script src="/__/firebase/4.6.2/firebase-firestore.js"></script>
+  <script src="/__/firebase/4.6.2/firebase-storage.js"></script>
+  <script src="/__/firebase/init.js"></script>
+  <script src="/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="/bower_components/deko-page/deko-page.html">
+  <link rel="import" href="/bower_components/app-route/app-location.html">
+  <link rel="import" href="/bower_components/firebase-ui-auth/firebase-ui-auth.html">
+
+  <!-- Favicon -->
+  <link rel="icon" href="images/favicon.ico">
+
+  <!-- See https://goo.gl/OOhYW5 -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- See https://goo.gl/qRE0vM -->
+  <meta name="theme-color" content="#3f51b5">
+
+  <!-- Add to homescreen for Chrome on Android. Fallback for manifest.json -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="deko assistant">
+
+  <!-- Add to homescreen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="deko assistant">
+
+  <!-- Homescreen icons -->
+  <link rel="apple-touch-icon" href="images/manifest/icon-48x48.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="images/manifest/icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="96x96" href="images/manifest/icon-96x96.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="images/manifest/icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="images/manifest/icon-192x192.png">
+
+  <!-- Tile icon for Windows 8 (144x144 + tile color) -->
+  <meta name="msapplication-TileImage" content="images/manifest/icon-144x144.png">
+  <meta name="msapplication-TileColor" content="#3f51b5">
+  <meta name="msapplication-tap-highlight" content="no">
+
+  <style>
+    html,
+    body {
+      margin: 0;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <template is="dom-bind" id="app">
       <app-location route="{{route}}"></app-location>
       <deko-page user="[[user]]" on-logout="logout" on-login="login" route="{{route}}" search="{{search}}">
         <img src="/deko-150.png"/>
         <firebase-ui-auth bugfix id="auth" user="{{user}}" photo="{{user.imageUrl}}" sign-in-success-url="" sign-in='["GoogleAuthProvider","EmailAuthProvider"]'></firebase-ui-auth>
       </deko-page>
     </template>
-  </body>
-  <script>
-    var db = firebase.firestore()
-    var app = document.querySelector('#app')
-    app.logout = function() { app.$.auth.signOut() }
-    app.login = function() { app.$.auth.trySignIn() }
-    firebase.firestore().enablePersistence().then(function() {
-      // Initialize Cloud Firestore through firebase
-      db = firebase.firestore()
-    }).catch(function(err) {
-      
-      if (err.code == 'failed-precondition') {
-        // Multiple tabs open, persistence can only be enabled
-        // in one tab at a a time.
-        // ...
-      } else if (err.code == 'unimplemented') {
-        // The current browser does not support all of the
-        // features required to enable persistence
-        // ...
-      }
-   })
-  </script>
+</body>
+<script>
+  var db = firebase.firestore()
+  var app = document.querySelector('#app')
+  app.logout = function() {
+    app.$.auth.signOut()
+  }
+  app.login = function() {
+    app.$.auth.trySignIn()
+  }
+  firebase.firestore().enablePersistence().then(function() {
+    // Initialize Cloud Firestore through firebase
+    db = firebase.firestore()
+  }).catch(function(err) {
+
+    if (err.code == 'failed-precondition') {
+      // Multiple tabs open, persistence can only be enabled
+      // in one tab at a a time.
+      // ...
+    } else if (err.code == 'unimplemented') {
+      // The current browser does not support all of the
+      // features required to enable persistence
+      // ...
+    }
+  })
+</script>
+
 </html>
