@@ -38,21 +38,64 @@
 
   <!-- Homescreen icons -->
   <link rel="apple-touch-icon" href="images/manifest/icon-48x48.png">
-  <link rel="apple-touch-icon" sizes="72x72" href="images/manifest/icon-72x72.png">
-  <link rel="apple-touch-icon" sizes="96x96" href="images/manifest/icon-96x96.png">
-  <link rel="apple-touch-icon" sizes="144x144" href="images/manifest/icon-144x144.png">
-  <link rel="apple-touch-icon" sizes="192x192" href="images/manifest/icon-192x192.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="images/manifest/deko-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="96x96" href="images/manifest/deko-icon-96x96.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="images/manifest/deko-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="images/manifest/deko-icon-192x192.png">
 
   <!-- Tile icon for Windows 8 (144x144 + tile color) -->
-  <meta name="msapplication-TileImage" content="images/manifest/icon-144x144.png">
+  <meta name="msapplication-TileImage" content="images/manifest/deko-icon-144x144.png">
   <meta name="msapplication-TileColor" content="#3f51b5">
   <meta name="msapplication-tap-highlight" content="no">
 
   <style>
+    host: {
+      display: block;
+    }
+    
     html,
     body {
       margin: 0;
       height: 100%;
+    }
+    
+    .wellog {
+      display: grid;
+      grid-template-columns: 100%;
+      grid-gap: 10px;
+      margin: 20px;
+    }
+    
+    .welcome {
+      font-family: Roboto, Helvetica, sans-serif;
+      font-weight: 300;
+      font-size: 24px;
+      border-radius: 10px;
+      background-color: #f9f7f7;
+      padding: 30px 10px 10px 10px;
+      height: 500px;
+      width: 500px;
+      line-height: 1.3;
+    }
+    
+    @media only screen and (max-width: 600px) {
+      .welcome {
+        height: 400px;
+        width: 300px;
+        font-size: 18px;
+      }
+    }
+    
+    p {
+      margin: 10px;
+    }
+    
+    .deko {
+      position: fixed;
+      bottom: 17px;
+      margin-left: -30px;
+      left: 50%;
+      height: 60px;
     }
   </style>
 </head>
@@ -61,8 +104,21 @@
   <template is="dom-bind" id="app">
       <app-location route="{{route}}"></app-location>
       <deko-page user="[[user]]" on-logout="logout" on-login="login" route="{{route}}" search="{{search}}">
-        <img src="/deko-150.png"/>
-        <firebase-ui-auth bugfix id="auth" user="{{user}}" photo="{{user.imageUrl}}" sign-in-success-url="" sign-in='["GoogleAuthProvider","EmailAuthProvider"]'></firebase-ui-auth>
+        <img class="deko" on-tap="new" src="/images/deko.svg" autofocus/>
+        <div class="wellog">
+          <div class="welcome">
+            <p>Hi there - I am deko</p>
+            <p>I am an AI designed to help you</p>
+            <p>You love a challenge, I love learning</p>
+              <p>I love a challenge, you love learning</p> 
+              <p>We’re perfect partners!</p>
+            <p>I can solve your queries, improve your life, make actions simpler, listen and respond. But I need your help to become better. The more you use me the better I will get.</p>
+              <p>So let us create, use and give</p>
+          </div>
+          <div class="logins">
+            <firebase-ui-auth bugfix id="auth" user="{{user}}" photo="{{user.imageUrl}}" sign-in-success-url="" sign-in='["GoogleAuthProvider","EmailAuthProvider"]'></firebase-ui-auth>
+          </div>
+        </div>
       </deko-page>
     </template>
 </body>
