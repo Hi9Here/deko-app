@@ -11,7 +11,8 @@
     "mkdirp": "^0.5.1",
     "mkdirp-promise": "^4.0.0",
     "node-cloud-vision-api": "^0.2.0",
-    "twig": "^1.10.5"
+    "twig": "^1.10.5",
+    "unsplash-js": "^4.7.0"
   },
   "private": true
 }
