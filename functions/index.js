@@ -143,8 +143,11 @@ const languageService = functions.firestore.document('Profiles/{pid}').onWrite(e
     console.error('ERROR:', err)
   });
 })
-const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardid}').onWrite(event => {
-  console.log(event.data.data(), event.params)
+const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}').onWrite(event => {
+  console.log(event.data.data())
+  if (!event.data.data().image) {
+    functions.firestore.document('Profiles/'+event.params.pid+'cards/'+event.params.cardId).set({image:"hi"}, {merge:true})
+  }
   // get title
   // get find image matching title
 })
