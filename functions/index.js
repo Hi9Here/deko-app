@@ -148,6 +148,7 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
   if (!event.data.data().image) {
     functions.firestore.document('Profiles/'+event.params.pid+'cards/'+event.params.cardId).ref.set({image:"hi"}, {merge:true})
   }
+  event.data.data().ref.set({cf:"hi"}, {merge:true})
   // get title
   // get find image matching title
 })
