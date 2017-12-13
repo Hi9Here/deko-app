@@ -85,15 +85,61 @@
       margin: 10px;
     }
     
-    .firebaseui-idp-google>.firebaseui-idp-text {
-      font-weight: 300;
-      font-family: 'Open Sans', sans-serif;
+    .logins {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      bottom: 120px;
+      width: 560px;
+    }
+    /* Buttons to work in Firefox and Safari */
+    
+    .firebaseui-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .firebaseui-card-content ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
     }
     
     .firebaseui-idp-text.firebaseui-idp-text {
       font-weight: 300;
       font-family: 'Open Sans', sans-serif;
+      color: #fff;
     }
+    
+    .firebaseui-idp-text {
+      font-size: 15px;
+      color: #fff;
+    }
+    
+    .firebaseui-idp-text-short {
+      display: none;
+    }
+    
+    .firebaseui-idp-button {
+      height: 40px;
+      width: 200px;
+      background-color: #ff000d;
+      border: none;
+    }
+    
+    .firebaseui-id-idp-button {
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+      transition: 0.3s;
+    }
+    
+    .firebaseui-idp-button img {
+      height: 20px;
+      width: 20px;
+      float: left;
+    }
+    /* End of Styling for Buttons in Firefox and Safari */
     
     @media only screen and (max-width: 600px) {
       .welcome {
@@ -102,6 +148,10 @@
         font-size: 18px;
         padding: 20px;
         margin-top: 20px;
+      }
+      .logins {
+        width: 340px;
+        bottom: 80px;
       }
       .deko {
         height: 60px;
