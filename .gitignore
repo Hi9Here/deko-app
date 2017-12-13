@@ -2,3 +2,4 @@ bower_components
 firebase-debug.log
 f.js
 functions/node_modules
+.vscode/settings.json
