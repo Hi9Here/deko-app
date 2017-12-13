@@ -143,6 +143,12 @@ const languageService = functions.database.ref('/Profiles/{pid}').onWrite(event 
     console.error('ERROR:', err)
   });
 })
+const imageService = functions.database.ref('/Profiles/{pid}/cards/{cardid}').onWrite(event => {
+  console.log(event.data.val(), event.params)
+  // get title
+  // get find image matching title
+})
+
 // Name of function that fires everytime a URL is passed to it. 
 // That way it keeps hot and will run faster
 var god = functions.https.onRequest(app)
