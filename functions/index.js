@@ -146,6 +146,9 @@ const languageService = functions.firestore.document('Profiles/{pid}').onWrite(e
 const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}').onWrite(event => {
   console.log(event.data.data())
   if (!event.data.data().image) {
+    db.collection("files").doc().get().then(docs => {
+      console.log(docs)
+    })
     event.data.ref.set({image:"hi"}, {merge:true})
   }
   return 1
