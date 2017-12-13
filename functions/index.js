@@ -342,4 +342,4 @@ app.get('/card/:profileid/:cardid', function(req, res) {
 })
 
  app.use('/static', express.static('../public'))
- module.exports = {god, generateThumbnail, languageService, imageService}
+ module.exports = {god, generateThumbnail} //, languageService, imageService}
