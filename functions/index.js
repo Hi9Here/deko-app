@@ -144,7 +144,7 @@ const languageService = functions.firestore.document('Profiles/{pid}').onWrite(e
   });
 })
 const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardid}').onWrite(event => {
-  console.log(event.data.val(), event.params)
+  console.log(event.data.data(), event.params)
   // get title
   // get find image matching title
 })
