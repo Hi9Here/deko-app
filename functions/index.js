@@ -123,7 +123,7 @@ const generateThumbnail = functions.storage.object().onChange(event => {
 // [END generateThumbnail]
 
 const app = express()
-const languageService = functions.firestore.document('/Profiles/{pid}').onWrite(event => {
+const languageService = functions.firestore.document('Profiles/{pid}').onWrite(event => {
   console.log(event.data.val(), event.params)
   const text = 'Hello, world!'
 
@@ -143,7 +143,7 @@ const languageService = functions.firestore.document('/Profiles/{pid}').onWrite(
     console.error('ERROR:', err)
   });
 })
-const imageService = functions.firestore.document('/Profiles/{pid}/cards/{cardid}').onWrite(event => {
+const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardid}').onWrite(event => {
   console.log(event.data.val(), event.params)
   // get title
   // get find image matching title
