@@ -146,6 +146,7 @@ const languageService = functions.firestore.document('Profiles/{pid}').onWrite(e
 })
 const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}').onWrite(event => {
   console.log(event.data.data())
+  
   if (!event.data.data().image && event.data.data().title) {
     db.collection("files").where('type', '==', 'image/jpeg').get().then(snapshot => {
       snapshot.forEach(doc => {
@@ -204,7 +205,7 @@ app.get("/pik/deko/Welcome,%F0%9F%98%8E%20tap%20here%20and%20I'll%20give%20you%2
   db.collection('Profiles').doc("5dlcFyFDFMzhXFev4Inl").collection('cards').doc("Jvo3gk13xiZz9aAajYCw").get().then(card => {
     console.log('Welcome =>', card.data())
     var addCard = card.data()
-    doc.collection('quill').orderBy("time", "desc").limit(1).get().then(function(data) {
+    card.collection('quill').orderBy("time", "desc").limit(1).get().then(function(data) {
       if (data && data.size) {
         addCard.quill = data.docs[0].data().value
         res.json({add: addCard})
