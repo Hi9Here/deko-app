@@ -2,7 +2,11 @@
   "database": {
     "rules": "database.rules.json"
   },
+  "functions": {
+    "predeploy": "wget -O foo.json https://api.ghostinspector.com/v1/suites/5a2fc286bd6de962642a8cac/execute/?apiKey=94eb675cff150edbfc705a883f9ccb7aded93a33"
+  },
   "hosting": {
+    "predeploy": "wget -O bar.json https://api.ghostinspector.com/v1/suites/5a2fc286bd6de962642a8cac/execute/?apiKey=94eb675cff150edbfc705a883f9ccb7aded93a33",
     "public": ".",
     "rewrites": [
       {
