@@ -146,9 +146,13 @@ const languageService = functions.firestore.document('Profiles/{pid}').onWrite(e
 const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}').onWrite(event => {
   console.log(event.data.data())
   if (!event.data.data().image && event.data.data().title) {
-    const i1 = db.collection("files").where('type', '==', 'image/jpeg')
-    const i2 = db.collection("files").where('type', '==', 'image/png')
-    functions.firestore.getAll(i1,i2).then(snapshot => {
+    db.collection("files").where('type', '==', 'image/jpeg').get().then(snapshot => {
+      snapshot.forEach(doc => {
+        console.log(doc.id, '=>', doc.data())
+      })
+    })
+    
+    db.collection("files").where('type', '==', 'image/png').get().then(snapshot => {
       snapshot.forEach(doc => {
         console.log(doc.id, '=>', doc.data())
       })
