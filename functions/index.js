@@ -123,6 +123,7 @@ const generateThumbnail = functions.storage.object().onChange(event => {
 // [END generateThumbnail]
 
 const app = express()
+
 const languageService = functions.firestore.document('Profiles/{pid}').onWrite(event => {
   console.log(event.data.val(), event.params)
   const text = 'Hello, world!'
@@ -178,18 +179,21 @@ app.set("twig options", {
 // USER FUNCTION
 // get the list of users and render them. Add users at the end of the god function
 app.get('/users', function(req, res) {
-    res.setHeader('Content-Type', 'application/json');
-    db.collection('Users').get().then(snapshot => {
-      var users = []
-      snapshot.forEach(doc => {
-        users.push(doc.data().details)
-        console.log(doc.id, '=>', doc.data())
-      })
-      res.json(users)
-    }).catch(e => {
-      console.log(e)
+  res.setHeader('Content-Type', 'application/json')
+  res.header("Access-Control-Allow-Origin", "*")
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+  
+  db.collection('Users').get().then(snapshot => {
+    var users = []
+    snapshot.forEach(doc => {
+      users.push(doc.data().details)
+      console.log(doc.id, '=>', doc.data())
     })
+    res.json(users)
+  }).catch(e => {
+    console.log(e)
   })
+})
   // END OF USER FUNCTION
 
 // PROFILES FUNCTION
