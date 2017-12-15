@@ -166,7 +166,7 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
         console.log(images)
       }).then(function(){
         console.log("find")
-        const path = images[Math.floor(Math.random() * myArray.length)].path
+        const path = images[Math.floor(Math.random() * images.length)].path
         console.log(path)
         
         storage.ref(path).getDownloadURL().then(function(url) {
