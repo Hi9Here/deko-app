@@ -168,8 +168,10 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
       
       storage.ref(path).getDownloadURL().then(function(url) {
         var newCard = event.data.data()
-        newCard.image = url
-        event.data.ref.set(newCard)
+        if (newCard.image === '') {
+          newCard.image = url
+          event.data.ref.set(newCard)
+        }
       })
     })
     
