@@ -148,18 +148,30 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
   console.log(event.data.data())
   
   if (!event.data.data().image && event.data.data().title) {
+    //get Images
+    var images = []
     db.collection("files").where('type', '==', 'image/jpeg').get().then(snapshot => {
       snapshot.forEach(doc => {
-        console.log(doc.id, '=>', doc.data())
+        images.push(doc.data())
+      })
+    }).then(function(){
+      db.collection("files").where('type', '==', 'image/png').get().then(snapshot => {
+        snapshot.forEach(doc => {
+          images.push(doc.data())
+        })
+      })
+    }).then(function(){
+      console.log(images)
+    }).then(function(){
+      
+      const path = images[Math.floor(Math.random() * myArray.length)].path
+      
+      storage.ref(path).getDownloadURL().then(function(url) {
+        event.data.ref.set({image:url, {merge:true})
       })
     })
     
-    db.collection("files").where('type', '==', 'image/png').get().then(snapshot => {
-      snapshot.forEach(doc => {
-        console.log(doc.id, '=>', doc.data())
-      })
-    })
-    // event.data.ref.set({image:"hi"}, {merge:true})
+    event.data.ref.set({autoImage:"hi"}, {merge:true})
   }
   return 1
   // get title
