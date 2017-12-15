@@ -167,11 +167,12 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
       const path = images[Math.floor(Math.random() * myArray.length)].path
       
       storage.ref(path).getDownloadURL().then(function(url) {
-        event.data.ref.set({image:url}, {merge:true})
+        var newCard = event.data.data()
+        newCard.image = url
+        event.data.ref.set(newCard)
       })
     })
     
-    event.data.ref.set({autoImage:"hi"}, {merge:true})
   }
   return 1
   // get title
