@@ -151,30 +151,36 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
     //get Images
     var images = []
     db.collection("files").where('type', '==', 'image/jpeg').get().then(snapshot => {
+      console.log("jpeg")
       snapshot.forEach(doc => {
         images.push(doc.data())
       })
     }).then(function(){
       db.collection("files").where('type', '==', 'image/png').get().then(snapshot => {
+        console.log("png")
         snapshot.forEach(doc => {
           images.push(doc.data())
         })
-      })
-    }).then(function(){
-      console.log(images)
-    }).then(function(){
-      
-      const path = images[Math.floor(Math.random() * myArray.length)].path
-      
-      storage.ref(path).getDownloadURL().then(function(url) {
-        var newCard = event.data.data()
-        if (newCard.image === '') {
-          newCard.image = url
-          event.data.ref.set(newCard)
-        }
+      }).then(function(){
+        console.log("all")
+        console.log(images)
+      }).then(function(){
+        console.log("find")
+        const path = images[Math.floor(Math.random() * myArray.length)].path
+        console.log(path)
+        
+        storage.ref(path).getDownloadURL().then(function(url) {
+          console.log(url)
+          var newCard = event.data.data()
+          console.log(newCard)
+          if (newCard.image === '') {
+            console.log(newCard)
+            newCard.image = url
+            event.data.ref.set(newCard)
+          }
+        })
       })
     })
-    
   }
   return 1
   // get title
