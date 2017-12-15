@@ -1,26 +1,24 @@
-const functions = require('firebase-functions');
+'use strict'
+const functions = require('firebase-functions')
 const express = require("express")
 const Twig = require("twig")
 const admin = require("firebase-admin")
 
 // Modules that get used in image resizing
-const gcs = require('@google-cloud/storage')();
-const language = require('@google-cloud/language');
+const gcs = require('@google-cloud/storage')()
+const language = require('@google-cloud/language')
 
-const spawn = require('child-process-promise').spawn;
-const path = require('path');
-const os = require('os');
-const fs = require('fs');
+const spawn = require('child-process-promise').spawn
+const path = require('path')
+const os = require('os')
+const fs = require('fs')
 
 // vision Modules
 const vision = require('node-cloud-vision-api')
 
 // Initialize the db
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp(functions.config().firebase)
 const db = admin.firestore()
-
-'use strict';
-
 
 // [START generateThumbnail]
 /**
@@ -169,7 +167,7 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
         const path = images[Math.floor(Math.random() * images.length)].path
         console.log(path)
         
-        storage.ref(path).getDownloadURL().then(function(url) {
+        functions.storage.ref(path).getDownloadURL().then(function(url) {
           console.log(url)
           var newCard = event.data.data()
           console.log(newCard)
