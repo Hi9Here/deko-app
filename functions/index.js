@@ -168,7 +168,7 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
           words:words.join(" "),
           synonyms:synonyms.join(" "),
           path:doc.data().path,
-          id:images.length-1,
+          id:images.length,
         })
       }
     }
@@ -185,7 +185,10 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
         var idx = lunr(function () {
           this.field('synonyms')
           this.field('words')
-          this.add(images)
+          var i
+          for (i = 0; i < images.length; ++i) {
+            this.add(images[i])
+          }
         })
         
         console.log("find", idx.search(event.data.data().title))
