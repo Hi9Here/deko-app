@@ -165,7 +165,7 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
         synonyms = Object.keys(doc.data().synonyms)
       }
       if (words || synonyms) {
-        images.({
+        images.push({
           words:words,
           synonyms:synonyms,
           path:doc.data().path,
