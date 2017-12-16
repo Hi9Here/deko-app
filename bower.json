@@ -38,7 +38,7 @@
   "resolutions": {
     "iron-a11y-keys-behavior": "~1.0.5",
     "firebase": "^4.0.0",
-    "polymer": "^1.11.0",
+    "polymer": "1.11.1",
     "paper-icon-button": "^1.0.0",
     "inbox-search": "45e40c4300",
     "paper-item": "^1.0.0",
