@@ -188,8 +188,7 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
           this.add(images)
         })
       }).then(function(idx){
-        console.log("find")
-        console.log(idx.search(event.data.data().title))
+        console.log("find", idx.search(event.data.data().title))
         
         const path = images[Math.floor(Math.random() * images.length)].path
         
