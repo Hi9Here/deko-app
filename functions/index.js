@@ -2,6 +2,8 @@
 const functions = require('firebase-functions')
 const express = require("express")
 const Twig = require("twig")
+var lunr = require("lunr")
+
 const admin = require("firebase-admin")
 
 // Modules that get used in image resizing
@@ -150,23 +152,48 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
   if (!event.data.data().image && event.data.data().title) {
     //get Images
     var images = []
+    var idx = lunr(function () {
+      this.field('synonyms')
+      this.field('words')
+    })
+    var loadImage = function (doc) {
+      var words
+      var synonyms
+      if (doc.data().vision && doc.data().vision[0].labelAnnotations) {
+        words = doc.data().vision[0].labelAnnotations.map(function(label) {
+          return label.description
+        })
+      }
+      if (doc.data().synonyms) {
+        synonyms = Object.keys(doc.data().synonyms).map(function(label) {
+          return label
+        })
+      }
+      if (words || synonyms) {
+        images.push(doc.data())
+        idx.add({
+          words:words,
+          synonyms:synonyms,
+          id:images.length-1,
+        })
+      }
+    }
     db.collection("files").where('type', '==', 'image/jpeg').get().then(snapshot => {
       console.log("jpeg")
-      snapshot.forEach(doc => {
-        images.push(doc.data())
-      })
+      snapshot.forEach(loadImage)
     }).then(function(){
       db.collection("files").where('type', '==', 'image/png').get().then(snapshot => {
         console.log("png")
-        snapshot.forEach(doc => {
-          images.push(doc.data())
-        })
+        snapshot.forEach(loadImage)
       }).then(function(){
         console.log("all")
         console.log(images)
       }).then(function(){
         console.log("find")
+        console.log(idx.search(event.data.data().title))
+        
         const path = images[Math.floor(Math.random() * images.length)].path
+        
         console.log(path)
         var newCard = event.data.data()
         if (newCard.image === '' && !newCard.autoImage) {
