@@ -32,7 +32,6 @@ const generateThumbnail = functions.storage.object().onChange(event => {
   const object = event.data; // The Storage object.
 
   const fileBucket = object.bucket // The Storage bucket that contains the file.
-  console.log(fileBucket)
   const filePath = object.name; // File path in the bucket.
   const contentType = object.contentType; // File content type.
   const resourceState = object.resourceState; // The resourceState is 'exists' or 'not_exists' (for file/folder deletions).
@@ -182,16 +181,19 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
         snapshot.forEach(loadImage)
       }).then(function(){
         console.log(images)
-        return lunr(function () {
+      }).then(function(){
+        var idx = lunr(function () {
           this.field('synonyms')
           this.field('words')
           this.add(images)
         })
-      }).then(function(idx){
+        
         console.log("find", idx.search(event.data.data().title))
-        
-        const path = images[Math.floor(Math.random() * images.length)].path
-        
+        if (idx.length) { 
+          var path = images[idx[0].id].path
+        } else {
+          var path = images[Math.floor(Math.random() * images.length)].path
+        }
         console.log(path)
         var newCard = event.data.data()
         if (newCard.image === '' && !newCard.autoImage) {
