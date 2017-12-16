@@ -6,6 +6,7 @@ const admin = require("firebase-admin")
 
 // Modules that get used in image resizing
 const gcs = require('@google-cloud/storage')()
+
 const language = require('@google-cloud/language')
 
 const spawn = require('child-process-promise').spawn
@@ -19,11 +20,6 @@ const vision = require('node-cloud-vision-api')
 // Initialize the db
 admin.initializeApp(functions.config().firebase)
 const db = admin.firestore()
-
-// Creates a client
-const storage = new gcs({
-  projectId: 'deko-app-one',
-})
 
 // [START generateThumbnail]
 /**
@@ -173,8 +169,8 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
         const path = images[Math.floor(Math.random() * images.length)].path
         console.log(path)
         try {
-          console.log("storage.ref")
-          storage.ref(path).getDownloadURL().then(function(url) {
+          console.log("gcs.ref")
+          gcs.ref(path).getDownloadURL().then(function(url) {
             console.log(url)
             var newCard = event.data.data()
             console.log(newCard)
@@ -185,8 +181,8 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
             }
           })
         } catch (e) {
-          console.log("storage.bucket().ref")
-          storage.bucket().ref(path).getDownloadURL().then(function(url) {
+          console.log("gcs.bucket().ref")
+          gcs.bucket().ref(path).getDownloadURL().then(function(url) {
             console.log(url)
             var newCard = event.data.data()
             console.log(newCard)
