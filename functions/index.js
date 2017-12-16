@@ -192,7 +192,7 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
         if (idx.length) { 
           var path = images[idx[0].id].path
         } else {
-          var path = images[Math.floor(Math.random() * images.length)].path
+          var path = "" // images[Math.floor(Math.random() * images.length)].path
         }
         console.log(path)
         var newCard = event.data.data()
