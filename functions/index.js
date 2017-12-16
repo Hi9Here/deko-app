@@ -173,8 +173,8 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
         const path = images[Math.floor(Math.random() * images.length)].path
         console.log(path)
         try {
-          console.log("admin.storage().bucket()")
-          admin.storage().bucket().ref(path).getDownloadURL().then(function(url) {
+          console.log("storage.ref")
+          storage.ref(path).getDownloadURL().then(function(url) {
             console.log(url)
             var newCard = event.data.data()
             console.log(newCard)
@@ -185,8 +185,8 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
             }
           })
         } catch (e) {
-          console.log("admin.storage().bucket()")
-          admin.storage().bucket().ref(path).getDownloadURL().then(function(url) {
+          console.log("storage.bucket().ref")
+          storage.bucket().ref(path).getDownloadURL().then(function(url) {
             console.log(url)
             var newCard = event.data.data()
             console.log(newCard)
