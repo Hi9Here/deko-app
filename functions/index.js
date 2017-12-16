@@ -168,31 +168,17 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
         console.log("find")
         const path = images[Math.floor(Math.random() * images.length)].path
         console.log(path)
-        try {
-          console.log("gcs.ref")
-          gcs.ref(path).getDownloadURL().then(function(url) {
-            console.log(url)
-            var newCard = event.data.data()
+        console.log("gcs.bucket(deko-app-one.appspot.com).ref")
+        gcs.bucket("deko-app-one.appspot.com").ref(path).getDownloadURL().then(function(url) {
+          console.log(url)
+          var newCard = event.data.data()
+          console.log(newCard)
+          if (newCard.image === '') {
             console.log(newCard)
-            if (newCard.image === '') {
-              console.log(newCard)
-              newCard.image = url
-              event.data.ref.set(newCard)
-            }
-          })
-        } catch (e) {
-          console.log("gcs.bucket(deko-app-one.appspot.com).ref")
-          gcs.bucket("deko-app-one.appspot.com").ref(path).getDownloadURL().then(function(url) {
-            console.log(url)
-            var newCard = event.data.data()
-            console.log(newCard)
-            if (newCard.image === '') {
-              console.log(newCard)
-              newCard.image = url
-              event.data.ref.set(newCard)
-            }
-          })
-        }
+            newCard.image = url
+            event.data.ref.set(newCard)
+          }
+        })
       })
     })
   }
