@@ -169,7 +169,7 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
         const path = images[Math.floor(Math.random() * images.length)].path
         console.log(path)
         console.log("gcs.bucket(deko-app-one.appspot.com).ref")
-        gcs.bucket("deko-app-one.appspot.com").ref(path).getDownloadURL().then(function(url) {
+        gcs.bucket("deko-app-one.appspot.com").file(path).getDownloadURL().then(function(url) {
           console.log(url)
           var newCard = event.data.data()
           console.log(newCard)
