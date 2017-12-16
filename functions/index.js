@@ -152,10 +152,7 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
   if (!event.data.data().image && event.data.data().title) {
     //get Images
     var images = []
-    var idx = lunr(function () {
-      this.field('synonyms')
-      this.field('words')
-    })
+
     var loadImage = function (doc) {
       var words
       var synonyms
@@ -165,15 +162,13 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
         })
       }
       if (doc.data().synonyms) {
-        synonyms = Object.keys(doc.data().synonyms).map(function(label) {
-          return label
-        })
+        synonyms = Object.keys(doc.data().synonyms)
       }
       if (words || synonyms) {
-        images.push(doc.data())
-        idx.add({
+        images.({
           words:words,
           synonyms:synonyms,
+          path:doc.data().path
           id:images.length-1,
         })
       }
@@ -186,9 +181,13 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
         console.log("png")
         snapshot.forEach(loadImage)
       }).then(function(){
-        console.log("all")
         console.log(images)
-      }).then(function(){
+        return lunr(function () {
+          this.field('synonyms')
+          this.field('words')
+          this.add(images)
+        })
+      }).then(function(idx){
         console.log("find")
         console.log(idx.search(event.data.data().title))
         
