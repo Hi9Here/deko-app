@@ -166,17 +166,31 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
         console.log("find")
         const path = images[Math.floor(Math.random() * images.length)].path
         console.log(path)
-        
-        functions.storage.ref(path).getDownloadURL().then(function(url) {
-          console.log(url)
-          var newCard = event.data.data()
-          console.log(newCard)
-          if (newCard.image === '') {
+        try {
+          console.log("admin.storage()")
+          admin.storage().ref(path).getDownloadURL().then(function(url) {
+            console.log(url)
+            var newCard = event.data.data()
             console.log(newCard)
-            newCard.image = url
-            event.data.ref.set(newCard)
-          }
-        })
+            if (newCard.image === '') {
+              console.log(newCard)
+              newCard.image = url
+              event.data.ref.set(newCard)
+            }
+          })
+        } catch (e) {
+          console.log("admin.storage")
+          admin.storage.ref(path).getDownloadURL().then(function(url) {
+            console.log(url)
+            var newCard = event.data.data()
+            console.log(newCard)
+            if (newCard.image === '') {
+              console.log(newCard)
+              newCard.image = url
+              event.data.ref.set(newCard)
+            }
+          })
+        }
       })
     })
   }
