@@ -168,7 +168,7 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
         images.({
           words:words,
           synonyms:synonyms,
-          path:doc.data().path
+          path:doc.data().path,
           id:images.length-1,
         })
       }
