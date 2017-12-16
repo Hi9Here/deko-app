@@ -20,6 +20,11 @@ const vision = require('node-cloud-vision-api')
 admin.initializeApp(functions.config().firebase)
 const db = admin.firestore()
 
+// Creates a client
+const storage = new gcs({
+  projectId: 'deko-app-one',
+})
+
 // [START generateThumbnail]
 /**
  * When an image is uploaded in the Storage bucket We generate a thumbnail automatically using
@@ -28,7 +33,8 @@ const db = admin.firestore()
 const generateThumbnail = functions.storage.object().onChange(event => {
   const object = event.data; // The Storage object.
 
-  const fileBucket = object.bucket; // The Storage bucket that contains the file.
+  const fileBucket = object.bucket // The Storage bucket that contains the file.
+  console.log(fileBucket)
   const filePath = object.name; // File path in the bucket.
   const contentType = object.contentType; // File content type.
   const resourceState = object.resourceState; // The resourceState is 'exists' or 'not_exists' (for file/folder deletions).
@@ -167,8 +173,8 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
         const path = images[Math.floor(Math.random() * images.length)].path
         console.log(path)
         try {
-          console.log("admin.storage()")
-          admin.storage().ref(path).getDownloadURL().then(function(url) {
+          console.log("admin.storage().bucket()")
+          admin.storage().bucket().ref(path).getDownloadURL().then(function(url) {
             console.log(url)
             var newCard = event.data.data()
             console.log(newCard)
@@ -179,8 +185,8 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
             }
           })
         } catch (e) {
-          console.log("admin.storage")
-          admin.storage.ref(path).getDownloadURL().then(function(url) {
+          console.log("admin.storage().bucket()")
+          admin.storage().bucket().ref(path).getDownloadURL().then(function(url) {
             console.log(url)
             var newCard = event.data.data()
             console.log(newCard)
