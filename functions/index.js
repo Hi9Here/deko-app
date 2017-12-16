@@ -154,8 +154,8 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
     var images = []
 
     var loadImage = function (doc) {
-      var words
-      var synonyms
+      var words = []
+      var synonyms = []
       if (doc.data().vision && doc.data().vision[0].labelAnnotations) {
         words = doc.data().vision[0].labelAnnotations.map(function(label) {
           return label.description
@@ -164,7 +164,7 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
       if (doc.data().synonyms) {
         synonyms = Object.keys(doc.data().synonyms)
       }
-      if (words || synonyms) {
+      if (words.length || synonyms.length) {
         images.push({
           words:words.join(" "),
           synonyms:synonyms.join(" "),
