@@ -168,17 +168,11 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
         console.log("find")
         const path = images[Math.floor(Math.random() * images.length)].path
         console.log(path)
-        console.log("gcs.bucket(deko-app-one.appspot.com).ref")
-        gcs.bucket("deko-app-one.appspot.com").file(path).getDownloadURL().then(function(url) {
-          console.log(url)
-          var newCard = event.data.data()
-          console.log(newCard)
-          if (newCard.image === '') {
-            console.log(newCard)
-            newCard.image = url
-            event.data.ref.set(newCard)
-          }
-        })
+        var newCard = event.data.data()
+        if (newCard.image === '' && !newCard.autoImage) {
+          newCard.autoImage = path
+          event.data.ref.set(newCard)
+        }
       })
     })
   }
