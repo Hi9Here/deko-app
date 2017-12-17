@@ -190,6 +190,7 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
       db.collection("lunr_index").doc("images").set(idx)
       
       console.log(idx)
+      
       var find = idx.search(event.data.data().title)
       if (find.length) { 
         var path = images[find[0].ref].path
