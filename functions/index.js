@@ -198,6 +198,8 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
       if (newCard.image === '' && !newCard.autoImage) {
         event.data.ref.set({autoImage:path}, {merge: true})
       }
+    }).catch(e => {
+      console.log(e)
     })
   }
   return 1
@@ -230,6 +232,21 @@ app.get('/users', function(req, res) {
       console.log(doc.id, '=>', doc.data())
     })
     res.json(users)
+  }).catch(e => {
+    console.log(e)
+  })
+})
+app.get('/profiles', function(req, res) {
+  res.setHeader('Content-Type', 'application/json')
+  res.header("Access-Control-Allow-Origin", "*")
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+  
+  db.collection('Profiles').get().then(snapshot => {
+    var profiles = []
+    snapshot.forEach(doc => {
+      profiles.push( {name:doc.data().displayName,id:doc.id} )
+    })
+    res.json(profiles)
   }).catch(e => {
     console.log(e)
   })
