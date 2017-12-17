@@ -172,7 +172,7 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
       }
     }
     db.getAll(db.collection("files").where('type', '==', 'image/jpeg'),db.collection("files").where('type', '==', 'image/png')).then(snapshot => {
-      console.log("jpeg and png")
+      console.log("jpeg and png", snapshot)
       snapshot[0].forEach(loadImage)
       snapshot[1].forEach(loadImage)
     }).then(function(){
