@@ -193,7 +193,7 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
         
         console.log("find", idx.search(event.data.data().title))
         if (idx.length) { 
-          var path = images[idx[0].id].path
+          var path = images[idx[0].ref].path
         } else {
           var path = "" // images[Math.floor(Math.random() * images.length)].path
         }
