@@ -272,26 +272,6 @@ app.get("/pik/deko/Welcome,%F0%9F%98%8E%20tap%20here%20and%20I'll%20give%20you%2
   })
 })
 
-// PROFILES FUNCTION
-//Get the name of the profiles and add to an array and render them. Add profiles at the end of the god function
-app.get('/profiles', function(req, res) {
-    res.setHeader('Content-Type', 'application/json');
-    db.collection('Profiles').get().then(snapshot => {
-      var profiles = []
-      snapshot.forEach(doc => {
-        //doc.date().displayName is the field value in the data under the profile
-        profiles.push(doc.data().displayName)
-          //doc.id is the id of the document
-          //doc.data is what is inside it
-        console.log(doc.id, '=>', doc.data())
-      })
-      res.json(profiles)
-    }).catch(e => {
-      console.log(e)
-    })
-  })
-  // END OF PROFILES FUNCTION
-
 // DELETE COLLECTION FUNCTION
 // Collection's Documents cannot be deleted from Datastore
 // If you delete a Collection the Documents remain
