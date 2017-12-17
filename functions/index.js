@@ -146,8 +146,7 @@ const languageService = functions.firestore.document('Profiles/{pid}').onWrite(e
   });
 })
 const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}').onWrite(event => {
-  console.log(event.data.data())
-  
+  console.log(event.data.data())  
   if (!event.data.data().image && event.data.data().title) {
     //get Images
     var images = []
@@ -172,38 +171,34 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
         })
       }
     }
-    db.collection("files").where('type', '==', 'image/jpeg').get().then(snapshot => {
-      console.log("jpeg")
-      snapshot.forEach(loadImage)
+    db.getAll(db.collection("files").where('type', '==', 'image/jpeg'),db.collection("files").where('type', '==', 'image/png')).then(snapshot => {
+      console.log("jpeg and png")
+      snapshot[0].forEach(loadImage)
+      snapshot[1].forEach(loadImage)
     }).then(function(){
-      db.collection("files").where('type', '==', 'image/png').get().then(snapshot => {
-        console.log("png")
-        snapshot.forEach(loadImage)
-      }).then(function(){
-        console.log(images)
-      }).then(function(){
-        var idx = lunr(function () {
-          this.field('synonyms')
-          this.field('words')
-          var i
-          for (i = 0; i < images.length; ++i) {
-            this.add(images[i])
-          }
-        })
-        
-        console.log("find", idx.search(event.data.data().title))
-        if (idx.length) { 
-          var path = images[idx[0].ref].path
-        } else {
-          var path = "" // images[Math.floor(Math.random() * images.length)].path
-        }
-        console.log(path)
-        var newCard = event.data.data()
-        if (newCard.image === '' && !newCard.autoImage) {
-          newCard.autoImage = path
-          event.data.ref.set(newCard)
+      console.log(images)
+    }).then(function(){
+      var idx = lunr(function () {
+        this.field('synonyms')
+        this.field('words')
+        var i
+        for (i = 0; i < images.length; ++i) {
+          this.add(images[i])
         }
       })
+        
+      var find = idx.search(event.data.data().title)
+      if (find.length) { 
+        var path = images[find[0].ref].path
+      } else {
+        var path = "" // images[Math.floor(Math.random() * images.length)].path
+      }
+      console.log(path)
+      var newCard = event.data.data()
+      if (newCard.image === '' && !newCard.autoImage) {
+        newCard.autoImage = path
+        event.data.ref.set(newCard)
+      }
     })
   }
   return 1
