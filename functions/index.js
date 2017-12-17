@@ -171,7 +171,7 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
         })
       }
     }
-    Promise.all(db.collection("files").where('type', '==', 'image/jpeg').get(),(db.collection("files").where('type', '==', 'image/png')).then(snapshot => {
+    Promise.all(db.collection("files").where('type', '==', 'image/jpeg').get(),db.collection("files").where('type', '==', 'image/png')).then(snapshot => {
       console.log("jpeg and png", snapshot)
       snapshot[0].forEach(loadImage)
       snapshot[1].forEach(loadImage)
