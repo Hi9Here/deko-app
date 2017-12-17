@@ -177,8 +177,7 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
       snapshot[1].forEach(loadImage)
     }).then(function(){
       console.log(images)
-    }).then(function(){
-      var idx = lunr(function () {
+      return lunr(function () {
         this.ref('id')
         this.field('synonyms', { boost: 10 })
         this.field('words')
@@ -187,9 +186,12 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
           that.add(images[prop])
         }
       })
-      
+
+    }).then(function(idx){
       db.collection("lunr_index").doc("images").set(idx)
-      
+      return idx
+    }).then(function(idx){      
+     
       console.log(idx)
       
       var find = idx.search(event.data.data().title)
