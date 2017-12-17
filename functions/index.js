@@ -149,7 +149,7 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
   console.log(event.data.data())  
   if (!event.data.data().image && event.data.data().title) {
     //get Images
-    var images = []
+    var images = {}
 
     var loadImage = function (doc) {
       var words = []
@@ -163,12 +163,12 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
         synonyms = Object.keys(doc.data().synonyms)
       }
       if (words.length || synonyms.length) {
-        images.push({
+        images[doc.id] = {
           words:words.join(" "),
           synonyms:synonyms.join(" "),
           path:doc.data().path,
-          id:images.length,
-        })
+          id:doc.id,
+        }
       }
     }
     Promise.all([db.collection("files").where('type', '==', 'image/jpeg').get(),db.collection("files").where('type', '==', 'image/png').get()]).then(snapshot => {
@@ -179,14 +179,17 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
       console.log(images)
     }).then(function(){
       var idx = lunr(function () {
+        this.ref('id')
         this.field('synonyms', { boost: 10 })
         this.field('words')
-        var i
-        for (i = 0; i < images.length; ++i) {
-          this.add(images[i])
+        images.forEach(img => {
+          this.add(img)
         }
       })
-        
+      
+      db.collection("lunr_index").doc("images").set(idx)
+      
+      console.log(idx)
       var find = idx.search(event.data.data().title)
       if (find.length) { 
         var path = images[find[0].ref].path
@@ -198,6 +201,7 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
       if (newCard.image === '' && !newCard.autoImage) {
         event.data.ref.set({autoImage:path}, {merge: true})
       }
+      return 1
     }).catch(e => {
       console.log(e)
     })
