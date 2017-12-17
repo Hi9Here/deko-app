@@ -179,7 +179,7 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
       console.log(images)
     }).then(function(){
       var idx = lunr(function () {
-        this.field('synonyms')
+        this.field('synonyms', { boost: 10 })
         this.field('words')
         var i
         for (i = 0; i < images.length; ++i) {
