@@ -187,7 +187,7 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
         })
       })
       
-      db.collection("lunr_index").doc("images").set(idx)
+     // db.collection("lunr_index").doc("images").set(idx)
       
       console.log(idx)
       
