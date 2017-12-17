@@ -184,7 +184,7 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
         this.field('words')
         images.forEach(img => {
           this.add(img)
-        }
+        })
       })
       
       db.collection("lunr_index").doc("images").set(idx)
