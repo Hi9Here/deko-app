@@ -196,8 +196,7 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
       console.log(path)
       var newCard = event.data.data()
       if (newCard.image === '' && !newCard.autoImage) {
-        newCard.autoImage = path
-        event.data.ref.set(newCard)
+        event.data.ref.set({autoImage:path}, {merge: true})
       }
     })
   }
