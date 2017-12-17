@@ -182,9 +182,10 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
         this.ref('id')
         this.field('synonyms', { boost: 10 })
         this.field('words')
-        images.forEach(img => {
-          this.add(img)
-        }, this)
+        var that = this
+        for (const prop in images) {
+          that.add(images[prop])
+        }
       })
       
      // db.collection("lunr_index").doc("images").set(idx)
