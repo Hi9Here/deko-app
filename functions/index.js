@@ -122,6 +122,7 @@ const generateThumbnail = functions.storage.object().onChange(event => {
       console.log("deleted temporary file")
       fs.unlinkSync(tempFilePath)
     }).then(() => {
+      console.log(" make a new lunr index")
       var images = {}
       var loadImage = function (doc) {
         var words = []
