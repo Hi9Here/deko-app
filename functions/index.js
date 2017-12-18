@@ -119,10 +119,6 @@ const generateThumbnail = functions.storage.object().onChange(event => {
       return bucket.upload(tempFilePath, { destination: thumbFilePath })
       
     }).then(() => {
-      console.log("deleted temporary file")
-      fs.unlinkSync(tempFilePath)
-      return 1
-    }).then(() => {
       console.log("Make a new lunr index")
       var images = {}
       var loadImage = function (doc) {
@@ -144,12 +140,13 @@ const generateThumbnail = functions.storage.object().onChange(event => {
           }
         }
       }
-      Promise.all([db.collection("files").where('type', '==', 'image/jpeg').get(),db.collection("files").where('type', '==', 'image/png').get()]).then(snapshot => {
+      return Promise.all([db.collection("files").where('type', '==', 'image/jpeg').get(),db.collection("files").where('type', '==', 'image/png').get()]).then(snapshot => {
         console.log("jpeg and png", snapshot)
         snapshot[0].forEach(loadImage)
         snapshot[1].forEach(loadImage)
       }).then(function(){
         console.log("list of images",images)
+        return 1
       }).then(function(){
         console.log("creating index")
         var idx = lunr(function () {
@@ -164,16 +161,18 @@ const generateThumbnail = functions.storage.object().onChange(event => {
       
         console.log("the index",JSON.stringify(idx))
         
-        db.collection("lunr_index").doc("images").set({idx:JSON.stringify(idx)})
-        
+        return db.collection("lunr_index").doc("images").set({idx:JSON.stringify(idx)})
       }).catch((e) => {
         console.log(e)
       })
     }).catch((e) => {
       console.log(e)
     })
+    
+  }).then(() => {
+    console.log("deleted temporary file")
+    fs.unlinkSync(tempFilePath)
     return 1
-    // Once the thumbnail has been uploaded delete the local file to free up disk space.
   }).catch((e) => console.log(e))
   // [END thumbnailGeneration]
 })
