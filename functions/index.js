@@ -118,7 +118,56 @@ const generateThumbnail = functions.storage.object().onChange(event => {
       // Uploading the thumbnail.
       return bucket.upload(tempFilePath, { destination: thumbFilePath })
       
-    }).then(() => fs.unlinkSync(tempFilePath)).catch((e) => console.log(e))
+    }).then(() => {
+      fs.unlinkSync(tempFilePath)
+    }).then(() => {
+      var images = {}
+      var loadImage = function (doc) {
+        var words = []
+        var synonyms = []
+        if (doc.data().vision && doc.data().vision[0].labelAnnotations) {
+          words = doc.data().vision[0].labelAnnotations.map(function(label) {
+            return label.description
+          })
+        }
+        if (doc.data().synonyms) {
+          synonyms = Object.keys(doc.data().synonyms)
+        }
+        if (words.length || synonyms.length) {
+          images[doc.data().path] = {
+            words:words.join(" "),
+            synonyms:synonyms.join(" "),
+            path:doc.data().path,
+          }
+        }
+      }
+      Promise.all([db.collection("files").where('type', '==', 'image/jpeg').get(),db.collection("files").where('type', '==', 'image/png').get()]).then(snapshot => {
+        console.log("jpeg and png", snapshot)
+        snapshot[0].forEach(loadImage)
+        snapshot[1].forEach(loadImage)
+      }).then(function(){
+        console.log(images)
+      }).then(function(){      
+        var idx = lunr(function () {
+          this.ref('path')
+          this.field('synonyms', { boost: 10 })
+          this.field('words')
+          var that = this
+          for (const prop in images) {
+            that.add(images[prop])
+          }
+        })
+      
+        console.log(JSON.stringify(idx))
+        
+        db.collection("lunr_index").doc("images").set(idx)
+        
+      }).catch((e) => {
+        console.log(e)
+      })
+    }).catch((e) => {
+      console.log(e)
+    })
     // Once the thumbnail has been uploaded delete the local file to free up disk space.
   }).catch((e) => console.log(e))
   // [END thumbnailGeneration]
@@ -128,7 +177,7 @@ const generateThumbnail = functions.storage.object().onChange(event => {
 const app = express()
 
 const languageService = functions.firestore.document('Profiles/{pid}').onWrite(event => {
-  console.log(event.data.val(), event.params)
+  console.log(event.data.data(), event.params)
   const text = 'Hello, world!'
 
   const document = {
@@ -149,58 +198,20 @@ const languageService = functions.firestore.document('Profiles/{pid}').onWrite(e
 })
 const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}').onWrite(event => {
   console.log(event.data.data())  
-  if (!event.data.data().image && event.data.data().title) {
-    //get Images
-    var images = {}
-
-    var loadImage = function (doc) {
-      var words = []
-      var synonyms = []
-      if (doc.data().vision && doc.data().vision[0].labelAnnotations) {
-        words = doc.data().vision[0].labelAnnotations.map(function(label) {
-          return label.description
-        })
-      }
-      if (doc.data().synonyms) {
-        synonyms = Object.keys(doc.data().synonyms)
-      }
-      if (words.length || synonyms.length) {
-        images[doc.id] = {
-          words:words.join(" "),
-          synonyms:synonyms.join(" "),
-          path:doc.data().path,
-          id:doc.id,
-        }
-      }
-    }
-    Promise.all([db.collection("files").where('type', '==', 'image/jpeg').get(),db.collection("files").where('type', '==', 'image/png').get()]).then(snapshot => {
-      console.log("jpeg and png", snapshot)
-      snapshot[0].forEach(loadImage)
-      snapshot[1].forEach(loadImage)
-    }).then(function(){
-      console.log(images)
-    }).then(function(){      
-      var idx = lunr(function () {
-        this.ref('path')
-        this.field('synonyms', { boost: 10 })
-        this.field('words')
-        var that = this
-        for (const prop in images) {
-          that.add(images[prop])
-        }
-      })
-      
-      console.log(JSON.stringify(idx))
-      
-      var find = idx.search(event.data.data().title)
+  var newCard = event.data.data()
+  if (!newCard.image && newCard.title) {
+    //get Images idx
+    db.collection("lunr_index").doc("images").get().then((doc) => {
+      var idx = doc.data()                                                  
+      var find = idx.search(newCard.title)
       if (find.length) { 
         var path = find[0].ref.path.split("/")[0] + "/" + find[0].ref.path.split("/")[1] + "/" + "thumb_" + find[0].ref.path.split("/")[2]
       } else {
         var path = "" // images[Math.floor(Math.random() * images.length)].path
       }
       console.log(path)
-      var newCard = event.data.data()
-      if (newCard.image === '' && !newCard.autoImage) {
+      
+      if (path && newCard.image === '' && !newCard.autoImage) {
         event.data.ref.set({autoImage:path}, {merge: true})
       }
       return 1
