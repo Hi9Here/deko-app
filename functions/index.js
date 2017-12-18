@@ -209,7 +209,8 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
       var idx = lunr.Index.load(JSON.parse(doc.data().idx))                                               
       var find = idx.search(newCard.title)
       if (find.length) { 
-        var path = find[0].ref.path.split("/")[0] + "/" + find[0].ref.path.split("/")[1] + "/" + "thumb_" + find[0].ref.path.split("/")[2]
+        const bigPath = find[0].ref
+        var path = bigPath.split("/")[0] + "/" + bigPath.split("/")[1] + "/" + "thumb_" + bigPath.split("/")[2]
       } else {
         var path = "" // images[Math.floor(Math.random() * images.length)].path
       }
