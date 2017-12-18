@@ -205,7 +205,7 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
   var newCard = event.data.data()
   if (!newCard.image && newCard.title) {
     //get Images idx
-    db.collection("lunr_index").doc("images").get().then((doc) => {
+    return db.collection("lunr_index").doc("images").get().then((doc) => {
       var idx = lunr.Index.load(JSON.parse(doc.data().idx))                                               
       var find = idx.search(newCard.title)
       if (find.length) { 
@@ -219,12 +219,10 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
       if (path && newCard.image === '' && !newCard.autoImage) {
         event.data.ref.set({autoImage:path}, {merge: true})
       }
-      return 1
     }).catch(e => {
       console.log(e)
     })
   }
-  return 1
   // get title
   // get find image matching title
 })
