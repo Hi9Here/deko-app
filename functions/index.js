@@ -179,7 +179,7 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
       console.log(images)
     }).then(function(){      
       var idx = lunr(function () {
-        this.ref('id')
+        this.ref('path')
         this.field('synonyms', { boost: 10 })
         this.field('words')
         var that = this
@@ -188,8 +188,7 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
         }
       })
       
-      db.collection("lunr_index").doc("images").set(idx)
-      console.log(idx)
+      console.log(JSON.stringify(idx))
       
       var find = idx.search(event.data.data().title)
       if (find.length) { 
