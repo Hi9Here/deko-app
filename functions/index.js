@@ -119,6 +119,7 @@ const generateThumbnail = functions.storage.object().onChange(event => {
       return bucket.upload(tempFilePath, { destination: thumbFilePath })
       
     }).then(() => {
+      console.log("deleted temporary file")
       fs.unlinkSync(tempFilePath)
     }).then(() => {
       var images = {}
@@ -146,8 +147,9 @@ const generateThumbnail = functions.storage.object().onChange(event => {
         snapshot[0].forEach(loadImage)
         snapshot[1].forEach(loadImage)
       }).then(function(){
-        console.log(images)
-      }).then(function(){      
+        console.log("list of images",images)
+      }).then(function(){
+        console.log("creating index")
         var idx = lunr(function () {
           this.ref('path')
           this.field('synonyms', { boost: 10 })
@@ -158,9 +160,9 @@ const generateThumbnail = functions.storage.object().onChange(event => {
           }
         })
       
-        console.log(JSON.stringify(idx))
+        console.log("the index",JSON.stringify(idx))
         
-        db.collection("lunr_index").doc("images").set(idx)
+        db.collection("lunr_index").doc("images").set({idx:JSON.stringify(idx)})
         
       }).catch((e) => {
         console.log(e)
@@ -168,6 +170,7 @@ const generateThumbnail = functions.storage.object().onChange(event => {
     }).catch((e) => {
       console.log(e)
     })
+    return 1
     // Once the thumbnail has been uploaded delete the local file to free up disk space.
   }).catch((e) => console.log(e))
   // [END thumbnailGeneration]
