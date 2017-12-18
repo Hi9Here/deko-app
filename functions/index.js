@@ -206,7 +206,7 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
   if (!newCard.image && newCard.title) {
     //get Images idx
     db.collection("lunr_index").doc("images").get().then((doc) => {
-      var idx = JSON.parse(doc.data().idx)                                                
+      var idx = lunr.Index.load(JSON.parse(doc.data().idx))                                               
       var find = idx.search(newCard.title)
       if (find.length) { 
         var path = find[0].ref.path.split("/")[0] + "/" + find[0].ref.path.split("/")[1] + "/" + "thumb_" + find[0].ref.path.split("/")[2]
