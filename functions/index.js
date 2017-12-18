@@ -23,6 +23,8 @@ const vision = require('node-cloud-vision-api')
 admin.initializeApp(functions.config().firebase)
 const db = admin.firestore()
 
+const dbFiles = admin.database()
+
 // [START generateThumbnail]
 /**
  * When an image is uploaded in the Storage bucket We generate a thumbnail automatically using
@@ -192,7 +194,7 @@ const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}
       
       var find = idx.search(event.data.data().title)
       if (find.length) { 
-        var path = images[find[0].ref].path.split("/")[0] + "/" + images[find[0].ref].path.split("/")[1] + "/" + "thumb_" + images[find[0].ref].path.split("/")[2]
+        var path = find[0].ref.path.split("/")[0] + "/" + find[0].ref.path.split("/")[1] + "/" + "thumb_" + find[0].ref.path.split("/")[2]
       } else {
         var path = "" // images[Math.floor(Math.random() * images.length)].path
       }
