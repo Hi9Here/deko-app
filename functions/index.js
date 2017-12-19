@@ -133,10 +133,17 @@ const generateThumbnail = functions.storage.object().onChange(event => {
           synonyms = Object.keys(doc.data().synonyms)
         }
         if (words.length || synonyms.length) {
+          const path = doc.data().path
+          if (path.split("/")[2] && path.split("/")[2].split(".")[0]) {
+            const name = path.split("/")[2].split(".")[0]
+          } else {
+            const name = path
+          }
           images[doc.data().path] = {
             words:words.join(" "),
             synonyms:synonyms.join(" "),
-            path:doc.data().path,
+            path:path,
+            name:name,
           }
         }
       }
@@ -151,7 +158,8 @@ const generateThumbnail = functions.storage.object().onChange(event => {
         console.log("creating index")
         var idx = lunr(function () {
           this.ref('path')
-          this.field('synonyms', { boost: 10 })
+          this.field('name', { boost: 12 })
+          this.field('synonyms', { boost: 6 })
           this.field('words')
           var that = this
           for (const prop in images) {
