@@ -42,7 +42,7 @@ const generateThumbnail = functions.storage.object().onChange(event => {
   // Exit if this is triggered on a file that is not an image.
   if (!contentType.startsWith('image/')) {
     console.log('This is not an image.')
-    return
+    return 
   }
 
   // Get the file name.
@@ -100,7 +100,11 @@ const generateThumbnail = functions.storage.object().onChange(event => {
       
       console.log("the index",JSON.stringify(idx))
         
-      return db.collection("lunr_index").doc("images").set({idx:JSON.stringify(idx)})
+      return db.collection("lunr_index").doc("images").set({idx:JSON.stringify(idx)}).then(function(){
+        console.log("Job Done!!")
+      }).catch((e) => {
+        console.log(e)
+      })
     }).catch((e) => {
       console.log(e)
     })
