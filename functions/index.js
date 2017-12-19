@@ -142,11 +142,9 @@ const generateThumbnail = functions.storage.object().onChange(event => {
     const hash = filePath.split("/")[1]
     var theHash = {}
     theHash[hash] = true
-    db.collection("Users").doc(uid).set({files: theHash}, {merge: true})
-    db.collection("files").doc(hash).get().then(doc => {
+    return Promise.all([db.collection("Users").doc(uid).set({files: theHash}, {merge: true}), db.collection("files").doc(hash).get()]).then(doc => {
       if (!doc.exists || (doc && doc.data() && !doc.data().vision)) {
         vision.init({auth: 'AIzaSyCKbNZem3UKzkWy8NST2Al7gKWpAXFduWU'})
-
         // construct parameters
         const reqV = new vision.Request({
           image: new vision.Image(tempFilePath),
@@ -173,9 +171,11 @@ const generateThumbnail = functions.storage.object().onChange(event => {
 
     }).then(() => {
       // Uploading the thumbnail.
+      console.log('Thumbnail Uploading to', thumbFilePath)
       return bucket.upload(tempFilePath, { destination: thumbFilePath })
       
     }).then(() => {
+      console.log('Thumbnail Uploaded', thumbFilePath)
       return 4
     }).catch((e) => {
       console.log(e)
