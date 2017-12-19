@@ -50,7 +50,60 @@ const generateThumbnail = functions.storage.object().onChange(event => {
   // Exit if the image is already a thumbnail.
   if (fileName.startsWith('thumb_')) {
     console.log('Already a Thumbnail.')
-    return 1
+    console.log("Make a new lunr index")
+    var images = {}
+    var loadImage = function (doc) {
+      var words = []
+      var synonyms = []
+      if (doc.data().vision && doc.data().vision[0].labelAnnotations) {
+        words = doc.data().vision[0].labelAnnotations.map(function(label) {
+          return label.description
+        })
+      }
+      if (doc.data().synonyms) {
+        synonyms = Object.keys(doc.data().synonyms)
+      }
+      if (words.length || synonyms.length) {
+        const path = doc.data().path
+        if (path.split("/")[2] && path.split("/")[2].split(".")[0]) {
+          const name = path.split("/")[2].split(".")[0]
+        } else {
+          const name = path
+        }
+        images[doc.data().path] = {
+          words:words.join(" "),
+          synonyms:synonyms.join(" "),
+          path:path,
+          name:name,
+        }
+      }
+    }
+    return Promise.all([db.collection("files").where('type', '==', 'image/jpeg').get(),db.collection("files").where('type', '==', 'image/png').get()]).then(snapshot => {
+      console.log("jpeg and png", snapshot)
+      snapshot[0].forEach(loadImage)
+      snapshot[1].forEach(loadImage)
+    }).then(function(){
+      console.log("list of images",images)
+      return 1
+    }).then(function(){
+      console.log("creating index")
+      var idx = lunr(function () {
+        this.ref('path')
+        this.field('name', { boost: 12 })
+        this.field('synonyms', { boost: 6 })
+        this.field('words')
+        var that = this
+        for (const prop in images) {
+          that.add(images[prop])
+        }
+      })
+      
+      console.log("the index",JSON.stringify(idx))
+        
+      return db.collection("lunr_index").doc("images").set({idx:JSON.stringify(idx)})
+    }).catch((e) => {
+      console.log(e)
+    })
   }
 
   // Exit if this is a move or deletion event.
@@ -119,60 +172,7 @@ const generateThumbnail = functions.storage.object().onChange(event => {
       return bucket.upload(tempFilePath, { destination: thumbFilePath })
       
     }).then(() => {
-      console.log("Make a new lunr index")
-      var images = {}
-      var loadImage = function (doc) {
-        var words = []
-        var synonyms = []
-        if (doc.data().vision && doc.data().vision[0].labelAnnotations) {
-          words = doc.data().vision[0].labelAnnotations.map(function(label) {
-            return label.description
-          })
-        }
-        if (doc.data().synonyms) {
-          synonyms = Object.keys(doc.data().synonyms)
-        }
-        if (words.length || synonyms.length) {
-          const path = doc.data().path
-          if (path.split("/")[2] && path.split("/")[2].split(".")[0]) {
-            const name = path.split("/")[2].split(".")[0]
-          } else {
-            const name = path
-          }
-          images[doc.data().path] = {
-            words:words.join(" "),
-            synonyms:synonyms.join(" "),
-            path:path,
-            name:name,
-          }
-        }
-      }
-      return Promise.all([db.collection("files").where('type', '==', 'image/jpeg').get(),db.collection("files").where('type', '==', 'image/png').get()]).then(snapshot => {
-        console.log("jpeg and png", snapshot)
-        snapshot[0].forEach(loadImage)
-        snapshot[1].forEach(loadImage)
-      }).then(function(){
-        console.log("list of images",images)
-        return 1
-      }).then(function(){
-        console.log("creating index")
-        var idx = lunr(function () {
-          this.ref('path')
-          this.field('name', { boost: 12 })
-          this.field('synonyms', { boost: 6 })
-          this.field('words')
-          var that = this
-          for (const prop in images) {
-            that.add(images[prop])
-          }
-        })
-      
-        console.log("the index",JSON.stringify(idx))
-        
-        return db.collection("lunr_index").doc("images").set({idx:JSON.stringify(idx)})
-      }).catch((e) => {
-        console.log(e)
-      })
+      return 4
     }).catch((e) => {
       console.log(e)
     })
