@@ -377,33 +377,33 @@ app.get('/card/:profileid/:cardid', function(req, res) {
   const cardRef = db.collection('Profiles').doc(profileID).collection('cards').doc(cardID)
 
   // Get the Card Object from the reference
-  cardRef.get()
-    .then(card => {
-      if (card.exists) {
-        // cardStuff is equal to the data inside the Card collection
-        var cardStuff = card.data()
+  cardRef.get().then(card => {
+    if (card.exists) {
+      // cardStuff is equal to the data inside the Card collection
+      var cardStuff = card.data()
           // givenArray is array of Profiles that have been chosen for the card to be given to
-        const givenArray = cardStuff.given
+      const givenArray = cardStuff.given
 
         // every card can be given at least once. This prepopulates the object with default values
-        let givenCard = {
-            pak: 1,
-          }
+      let givenCard = {
+        pak: 1,
+      }
           // Go through the profiles in given array that the card will be given too
-        Object.keys(cardStuff).forEach(key => {
-            // Don't pass in given profiles and pak values to the new card data. 
-            if (key !== "given" && key !== "pak") {
-              givenCard[key] = cardStuff[key]
-            }
-          })
+      Object.keys(cardStuff).forEach(key => {
+           // Don't pass in given profiles and pak values to the new card data. 
+        if (key !== "given" && key !== "pak") {
+          givenCard[key] = cardStuff[key]
+        }
+      })
           // there are no fromProfile values as it has not been given before. Create a fromProfle object
           // ready for key values of Profiles : Timestamp
-        if (!givenCard.fromProfile) {
-          givenCard.fromProfile = {}
-        }
+  //    if (!givenCard.fromProfile) {
+  //      givenCard.fromProfile = {}
+  //    }
         // add the profile the card is being given from to an Object listing the Profiles that the card
         // has been given from. Listed in time and date order
-        givenCard.fromProfile[profileID] = Date.now()
+      
+ //     givenCard.fromProfile[profileID] = Date.now()
 
         // there are profiles in the given array 
         if (givenArray) {
