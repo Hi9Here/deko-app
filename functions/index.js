@@ -390,7 +390,7 @@ app.get('/card/:profileid/:cardid', function(req, res) {
         cardStuff.triks.quill = true
       }
           // givenArray is array of Profiles that have been chosen for the card to be given to
-      
+      console.log(cardStuff.given)
       const givenArray = Object.keys(cardStuff.given)
 
         // every card can be given at least once. This prepopulates the object with default values
