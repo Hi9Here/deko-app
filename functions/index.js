@@ -44,7 +44,7 @@ const generateThumbnail = functions.storage.object().onChange(event => {
     console.log('This is not an image.')
     return 
   }
-
+  console.log("path", path)
   // Get the file name.
   const fileName = path.basename(filePath);
   // Exit if the image is already a thumbnail.
@@ -53,24 +53,31 @@ const generateThumbnail = functions.storage.object().onChange(event => {
     console.log("Make a new lunr index")
     var images = {}
     var loadImage = function (doc) {
+      const data = doc.data()
       var words = []
       var synonyms = []
-      if (doc.data().vision && doc.data().vision[0].labelAnnotations) {
-        words = doc.data().vision[0].labelAnnotations.map(function(label) {
+      if (data.vision && data.vision[0].labelAnnotations) {
+        words = data.vision[0].labelAnnotations.map(function(label) {
           return label.description
         })
       }
-      if (doc.data().synonyms) {
-        synonyms = Object.keys(doc.data().synonyms)
+      if (data.synonyms) {
+        synonyms = Object.keys(data.synonyms)
       }
+      const profileId = Object.keys(data).filter(key => {
+        return data[key] === "profileId"
+      })
       if (words.length || synonyms.length) {
-        const path = doc.data().path
+        const path = data.path
         if (path.split("/")[2] && path.split("/")[2].split(".")[0]) {
           const name = path.split("/")[2].split(".")[0]
         } else {
           const name = path
         }
-        images[doc.data().path] = {
+        if (!images[profileId]) {
+          images[profileId] = {}
+        }
+        images[profileId][data.path] = {
           words:words.join(" "),
           synonyms:synonyms.join(" "),
           path:path,
