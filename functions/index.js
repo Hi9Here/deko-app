@@ -63,7 +63,7 @@ const generateThumbnail = functions.storage.object().onChange(event => {
       if (data.synonyms) {
         synonyms = Object.keys(data.synonyms)
       }
-      const profileId = Object.keys(data).filter(key => {
+      const profileIds = Object.keys(data).filter(key => {
         return data[key] === "profileId"
       })
       const path = data.path
@@ -72,14 +72,16 @@ const generateThumbnail = functions.storage.object().onChange(event => {
       } else {
         const name = path
       }
-      if (!images[profileId]) {
-        images[profileId] = {}
-      }
-      images[profileId][data.path] = {
-        words:words.join(" "),
-        synonyms:synonyms.join(" "),
-        path:path,
-        name:name,
+      profileIds.forEach(profileId => {
+        if (!images[profileId]) {
+          images[profileId] = {}
+        }
+        images[profileId][data.path] = {
+          words:words.join(" "),
+          synonyms:synonyms.join(" "),
+          path:path,
+          name:name,
+        }
       }
     }
     return Promise.all([db.collection("files").where('type', '==', 'image/jpeg').get(),db.collection("files").where('type', '==', 'image/png').get()]).then(snapshot => {
