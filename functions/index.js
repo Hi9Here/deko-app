@@ -75,7 +75,7 @@ const generateThumbnail = functions.storage.object().onChange(event => {
           words:words.join(" "),
           synonyms:synonyms.join(" "),
           path:filePath,
-          name:fileName,
+          name:fileName.replace("thumb_", " ").replace(["-","_","."], " "),
         }
       })
     }
@@ -90,7 +90,8 @@ const generateThumbnail = functions.storage.object().onChange(event => {
       console.log("creating indexs")
       Object.keys(images).forEach(profileId => {
         console.log("creating index for ", profileId)
-        var idx = lunr(function () {
+        console.log("",idx)
+        const idx = lunr(function () {
           this.ref('path')
           this.field('name', { boost: 12 })
           this.field('synonyms', { boost: 6 })
