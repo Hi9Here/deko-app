@@ -103,7 +103,7 @@ const generateThumbnail = functions.storage.object().onChange(event => {
       
         console.log("the index for", profileId, "is", JSON.stringify(idx))
         
-        return db.collection("Profiles").doc(profileId).collection("lunr_index").doc("images").set({idx:JSON.stringify(idx)}).then(function(){
+        return db.collection("Profiles").doc(profileId).collection("lunr_index_images").set({idx:JSON.stringify(idx)}).then(function(){
           console.log("upload index for ", profileId)
         }).catch((e) => {
           console.log(e)
