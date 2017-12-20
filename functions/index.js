@@ -93,8 +93,8 @@ const generateThumbnail = functions.storage.object().onChange(event => {
         console.log("creating index for ", profileId)
         const idx = lunr(function () {
           this.ref('path')
-          this.field('name', { boost: 12 })
-          this.field('synonyms', { boost: 6 })
+          this.field('name')
+          this.field('synonyms')
           this.field('words')
           var that = this
           for (const prop in images[profileId]) {
