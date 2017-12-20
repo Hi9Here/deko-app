@@ -66,12 +66,7 @@ const generateThumbnail = functions.storage.object().onChange(event => {
       const profileIds = Object.keys(data).filter(key => {
         return data[key] === "profileId"
       })
-      const path = data.path
-      if (path.split("/")[2] && path.split("/")[2].split(".")[0]) {
-        const name = path.split("/")[2].split(".")[0]
-      } else {
-        const name = path
-      }
+      
       profileIds.forEach(profileId => {
         if (!images[profileId]) {
           images[profileId] = {}
@@ -79,8 +74,8 @@ const generateThumbnail = functions.storage.object().onChange(event => {
         images[profileId][data.path] = {
           words:words.join(" "),
           synonyms:synonyms.join(" "),
-          path:path,
-          name:name,
+          path:filePath,
+          name:fileName,
         }
       })
     }
