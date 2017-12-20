@@ -80,32 +80,37 @@ const generateThumbnail = functions.storage.object().onChange(event => {
       })
     }
     return Promise.all([db.collection("files").where('type', '==', 'image/jpeg').get(),db.collection("files").where('type', '==', 'image/png').get()]).then(snapshot => {
-      console.log("jpeg and png", snapshot)
+      console.log("jpeg and png")
       snapshot[0].forEach(loadImage)
       snapshot[1].forEach(loadImage)
     }).then(function(){
       console.log("list of images",images)
       return 1
     }).then(function(){
-      console.log("creating index")
-      var idx = lunr(function () {
-        this.ref('path')
-        this.field('name', { boost: 12 })
-        this.field('synonyms', { boost: 6 })
-        this.field('words')
-        var that = this
-        for (const prop in images) {
-          that.add(images[prop])
-        }
-      })
+      console.log("creating indexs")
+      Object.keys(images).forEach(profileId => {
+        console.log("creating index for ", profileId)
+        var idx = lunr(function () {
+          this.ref('path')
+          this.field('name', { boost: 12 })
+          this.field('synonyms', { boost: 6 })
+          this.field('words')
+          var that = this
+          for (const prop in images[profileId]) {
+            that.add(images[profileId][prop])
+          }
+        })
       
-      console.log("the index",JSON.stringify(idx))
+        console.log("the index for", profileId, "is", JSON.stringify(idx))
         
-      return db.collection("lunr_index").doc("images").set({idx:JSON.stringify(idx)}).then(function(){
-        console.log("Job Done!!")
-      }).catch((e) => {
-        console.log(e)
+        return db.collection("Profiles").doc(profileId).collection("lunr_index").doc("images").set({idx:JSON.stringify(idx)}).then(function(){
+          console.log("upload index for ", profileId)
+        }).catch((e) => {
+          console.log(e)
+        })
       })
+    }).then(() => {
+      console.log("Job Done!!")
     }).catch((e) => {
       console.log(e)
     })
