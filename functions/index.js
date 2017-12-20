@@ -91,7 +91,6 @@ const generateThumbnail = functions.storage.object().onChange(event => {
       console.log("creating indexs")
       Object.keys(images).forEach(profileId => {
         console.log("creating index for ", profileId)
-        console.log("",idx)
         const idx = lunr(function () {
           this.ref('path')
           this.field('name', { boost: 12 })
