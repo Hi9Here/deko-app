@@ -82,7 +82,7 @@ const generateThumbnail = functions.storage.object().onChange(event => {
           path:path,
           name:name,
         }
-      }
+      })
     }
     return Promise.all([db.collection("files").where('type', '==', 'image/jpeg').get(),db.collection("files").where('type', '==', 'image/png').get()]).then(snapshot => {
       console.log("jpeg and png", snapshot)
