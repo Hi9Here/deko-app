@@ -449,6 +449,11 @@ app.get('/card/:profileid/:cardid', function(req, res) {
         console.log("No such Card!")
       }
       // Fire back JSON so that the client knows that it has worked
+    
+      res.setHeader('Content-Type', 'application/json')
+      res.header("Access-Control-Allow-Origin", "*")
+      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+    
       res.json({ success: true })
     }).catch(function(error) {
       console.log("Error getting Card:", error);
