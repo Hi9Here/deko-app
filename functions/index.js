@@ -381,8 +381,11 @@ app.get('/card/:profileid/:cardid', function(req, res) {
     if (card.exists) {
       // cardStuff is equal to the data inside the Card collection
       var cardStuff = card.data()
+      if (!cardStuff.pak) {
+        cardStuff.pak = 1
+      }
           // givenArray is array of Profiles that have been chosen for the card to be given to
-      const givenArray = cardStuff.given
+      const givenArray = Object.keys(cardStuff.given)
 
         // every card can be given at least once. This prepopulates the object with default values
       let givenCard = {
@@ -441,7 +444,7 @@ app.get('/card/:profileid/:cardid', function(req, res) {
             }).catch()
           })
         }
-        console.log("Card Data:", cardStuff, 'and givenarray is', givenArray)
+        console.log("Card Data:", cardStuff, 'and givenArray is', givenArray)
       } else {
         console.log("No such Card!")
       }
