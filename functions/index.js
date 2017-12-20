@@ -44,7 +44,6 @@ const generateThumbnail = functions.storage.object().onChange(event => {
     console.log('This is not an image.')
     return 
   }
-  console.log("path", path)
   // Get the file name.
   const fileName = path.basename(filePath);
   // Exit if the image is already a thumbnail.
@@ -67,22 +66,20 @@ const generateThumbnail = functions.storage.object().onChange(event => {
       const profileId = Object.keys(data).filter(key => {
         return data[key] === "profileId"
       })
-      if (words.length || synonyms.length) {
-        const path = data.path
-        if (path.split("/")[2] && path.split("/")[2].split(".")[0]) {
-          const name = path.split("/")[2].split(".")[0]
-        } else {
-          const name = path
-        }
-        if (!images[profileId]) {
-          images[profileId] = {}
-        }
-        images[profileId][data.path] = {
-          words:words.join(" "),
-          synonyms:synonyms.join(" "),
-          path:path,
-          name:name,
-        }
+      const path = data.path
+      if (path.split("/")[2] && path.split("/")[2].split(".")[0]) {
+        const name = path.split("/")[2].split(".")[0]
+      } else {
+        const name = path
+      }
+      if (!images[profileId]) {
+        images[profileId] = {}
+      }
+      images[profileId][data.path] = {
+        words:words.join(" "),
+        synonyms:synonyms.join(" "),
+        path:path,
+        name:name,
       }
     }
     return Promise.all([db.collection("files").where('type', '==', 'image/jpeg').get(),db.collection("files").where('type', '==', 'image/png').get()]).then(snapshot => {
