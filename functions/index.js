@@ -381,6 +381,8 @@ app.get('/card/:profileid/:cardid', function(req, res) {
     if (card.exists) {
       // cardStuff is equal to the data inside the Card collection
       var cardStuff = card.data()
+      console.log("cardStuff",cardStuff)
+      
       if (!cardStuff.pak) {
         cardStuff.pak = 1
       }
