@@ -68,14 +68,15 @@ const generateThumbnail = functions.storage.object().onChange(event => {
       })
       
       profileIds.forEach(profileId => {
+        console.log("adding Image ", data.path)
         if (!images[profileId]) {
           images[profileId] = {}
         }
         images[profileId][data.path] = {
           words:words.join(" "),
           synonyms:synonyms.join(" "),
-          path:filePath,
-          name:fileName.replace("thumb_", " ").replace(["-","_","."], " "),
+          path:data.path+"",
+          name:path.basename(data.path).replace("thumb_", " ").replace(["-","_","."], " "),
         }
       })
     }
