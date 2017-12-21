@@ -222,11 +222,11 @@ const languageService = functions.firestore.document('Profiles/{pid}').onWrite(e
 const giveService = functions.firestore.document('Profiles/{pid}/cards/{cardId}').onWrite(event => {
   console.log(event.data.data())  
       var cardStuff = event.data.data()
-      
       // there are profiles in the given array 
       if (cardStuff.given) {
-        const givenArray = Object.keys(cardStuff.given)
+        var givenArray = Object.keys(cardStuff.given)
         if (givenArray.length) {
+          var cardRef = event.data.ref
           var givenCard = {
             pak: 1,
           }
