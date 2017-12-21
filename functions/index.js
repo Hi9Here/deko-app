@@ -219,31 +219,70 @@ const languageService = functions.firestore.document('Profiles/{pid}').onWrite(e
     console.error('ERROR:', err)
   });
 })
-const imageService = functions.firestore.document('Profiles/{pid}/cards/{cardId}').onWrite(event => {
+const giveService = functions.firestore.document('Profiles/{pid}/cards/{cardId}').onWrite(event => {
   console.log(event.data.data())  
-  var newCard = event.data.data()
-  if (!newCard.image && newCard.title) {
-    //get Images idx
-    return db.collection("lunr_index").doc("images").get().then((doc) => {
-      var idx = lunr.Index.load(JSON.parse(doc.data().idx))                                               
-      var find = idx.search(newCard.title)
-      if (find.length) { 
-        const bigPath = find[0].ref
-        var path = bigPath.split("/")[0] + "/" + bigPath.split("/")[1] + "/" + "thumb_" + bigPath.split("/")[2]
-      } else {
-        var path = "" // images[Math.floor(Math.random() * images.length)].path
-      }
-      console.log(path)
+      var cardStuff = event.data.data()
       
-      if (path && newCard.image === '' && !newCard.autoImage) {
-        event.data.ref.set({autoImage:path}, {merge: true})
+      // there are profiles in the given array 
+      if (cardStuff.given) {
+        const givenArray = Object.keys(cardStuff.given)
+        if (givenArray.length) {
+          var givenCard = {
+            pak: 1,
+          }
+          // Go through the profiles in given array that the card will be given too
+          Object.keys(cardStuff).forEach(key => {
+           // Don't pass in given profiles and pak values to the new card data. 
+            if (key !== "given" && key !== "pak") {
+              givenCard[key] = cardStuff[key]
+            }
+          })
+          
+          
+          if (!cardStuff.pak) {
+            cardStuff.pak = 1
+          }
+      
+          if (!cardStuff.triks) {
+            cardStuff.triks = {}
+            cardStuff.triks.quill = true
+          }
+          // go through each profile in the given array
+          givenArray.forEach(givenToProfileID => {
+            // goto each card and allocate that to ref
+            db.collection('Profiles').doc(givenToProfileID).collection('cards').add(givenCard).then(ref => {
+              // find each trik under the card collection 
+              Object.keys(cardStuff.triks).forEach(trik => {
+                cardRef.collection(trik).orderBy("time", "desc").limit(1).get().then(cardTrikRef => {
+                  // Make sure that there are triks there
+                  if (cardTrikRef.docs.length) {
+                    console.log('data is, ', cardTrikRef)
+                      // goto most recent trik in each trik
+                    ref.collection(trik).add(cardTrikRef.docs[0].data())
+                  }
+                }).then(function() {
+                  // if the card can only be given once
+                  if (cardStuff.pak === 1) {
+                    // then delete all documents under the card collection and then the card
+                    // using the DELETE COLLECTION FUNCTION 
+                    // with the parameter specified
+                    // remember not to use db to reference the path to the collection to delete
+                    deleteCollection(cardRef, trik, 10)
+                  }
+                }).catch(e => {
+                  console.log(e)
+                })
+              })
+            }).then(function() {
+              // then delete the card
+              if (cardStuff.pak === 1) {
+                cardRef.delete()
+              }
+            }).catch()
+          })
+        }  
       }
-    }).catch(e => {
-      console.log(e)
-    })
-  }
-  // get title
-  // get find image matching title
+      console.log("Card Data:", cardStuff, 'and givenArray is', givenArray)
 })
 
 // Name of function that fires everytime a URL is passed to it. 
@@ -257,24 +296,6 @@ app.set("twig options", {
   strict_variables: false
 })
 
-// USER FUNCTION
-// get the list of users and render them. Add users at the end of the god function
-app.get('/users', function(req, res) {
-  res.setHeader('Content-Type', 'application/json')
-  res.header("Access-Control-Allow-Origin", "*")
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
-  
-  db.collection('Users').get().then(snapshot => {
-    var users = []
-    snapshot.forEach(doc => {
-      users.push(doc.data().details)
-      console.log(doc.id, '=>', doc.data())
-    })
-    res.json(users)
-  }).catch(e => {
-    console.log(e)
-  })
-})
 app.get('/profiles', function(req, res) {
   res.setHeader('Content-Type', 'application/json')
   res.header("Access-Control-Allow-Origin", "*")
@@ -383,29 +404,13 @@ app.get('/card/:profileid/:cardid', function(req, res) {
       var cardStuff = card.data()
       console.log("cardStuff",cardStuff)
       
-      if (!cardStuff.pak) {
-        cardStuff.pak = 1
-      }
-      
-      if (!cardStuff.triks) {
-        cardStuff.triks = {}
-        cardStuff.triks.quill = true
-      }
           // givenArray is array of Profiles that have been chosen for the card to be given to
-      console.log(cardStuff.given)
-      const givenArray = Object.keys(cardStuff.given)
+      console.log()
+      
+      
 
         // every card can be given at least once. This prepopulates the object with default values
-      let givenCard = {
-        pak: 1,
-      }
-          // Go through the profiles in given array that the card will be given too
-      Object.keys(cardStuff).forEach(key => {
-           // Don't pass in given profiles and pak values to the new card data. 
-        if (key !== "given" && key !== "pak") {
-          givenCard[key] = cardStuff[key]
-        }
-      })
+      
           // there are no fromProfile values as it has not been given before. Create a fromProfle object
           // ready for key values of Profiles : Timestamp
   //    if (!givenCard.fromProfile) {
@@ -416,43 +421,7 @@ app.get('/card/:profileid/:cardid', function(req, res) {
       
  //     givenCard.fromProfile[profileID] = Date.now()
 
-        // there are profiles in the given array 
-        if (givenArray) {
-          // go through each profile in the given array
-          givenArray.forEach(givenToProfileID => {
-            // goto each card and allocate that to ref
-            db.collection('Profiles').doc(givenToProfileID).collection('cards').add(givenCard).then(ref => {
-              // find each trik under the card collection 
-              Object.keys(cardStuff.triks).forEach(trik => {
-                cardRef.collection(trik).orderBy("time", "desc").limit(1).get().then(cardTrikRef => {
-                  // Make sure that there are triks there
-                  if (cardTrikRef.docs.length) {
-                    console.log('data is, ', cardTrikRef)
-                      // goto most recent trik in each trik
-                    ref.collection(trik).add(cardTrikRef.docs[0].data())
-                  }
-                }).then(function() {
-                  // if the card can only be given once
-                  if (cardStuff.pak === 1) {
-                    // then delete all documents under the card collection and then the card
-                    // using the DELETE COLLECTION FUNCTION 
-                    // with the parameter specified
-                    // remember not to use db to reference the path to the collection to delete
-                    deleteCollection(cardRef, trik, 10)
-                  }
-                }).catch(e => {
-                  console.log(e)
-                })
-              })
-            }).then(function() {
-              // then delete the card
-              if (cardStuff.pak === 1) {
-                cardRef.delete()
-              }
-            }).catch()
-          })
-        }
-        console.log("Card Data:", cardStuff, 'and givenArray is', givenArray)
+        
       } else {
         console.log("No such Card!")
       }
