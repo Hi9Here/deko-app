@@ -282,7 +282,7 @@ const giveService = functions.firestore.document('Profiles/{pid}/cards/{cardId}'
           })
         }  
       }
-      console.log("Card Data:", cardStuff, 'and givenArray is', givenArray)
+      console.log("Card Data:", cardStuff)
 })
 
 // Name of function that fires everytime a URL is passed to it. 
