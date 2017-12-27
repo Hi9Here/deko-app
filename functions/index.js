@@ -42,7 +42,19 @@ const generateThumbnail = functions.storage.object().onChange(event => {
   // Exit if this is triggered on a file that is not an image.
   if (!contentType.startsWith('image/')) {
     console.log('This is not an image.')
-    return 
+    return 1
+  }
+    // Exit if this is a move or deletion event.
+  if (resourceState === 'not_exists') {
+    console.log('This is a deletion event.')
+    return 2
+  }
+
+  // Exit if file exists but is not new and is only being triggered
+  // because of a metadata change.
+  if (resourceState === 'exists' && metageneration > 1) {
+    console.log('This is a metadata change event.')
+    return 3
   }
   // Get the file name.
   const fileName = path.basename(filePath);
@@ -87,7 +99,7 @@ const generateThumbnail = functions.storage.object().onChange(event => {
     return Promise.all([db.collection("files").where('type', '==', 'image/jpeg').get(),db.collection("files").where('type', '==', 'image/png').get()]).then(snapshot => {
       console.log("jpeg and png")
       snapshot[0].forEach(loadImage)
-      snapshot[1].forEach(loadImage)
+      return snapshot[1].forEach(loadImage)
     }).then(function(){
       console.log("list of images",images)
       return 1
@@ -109,29 +121,16 @@ const generateThumbnail = functions.storage.object().onChange(event => {
         console.log("the index for", profileId, "is", JSON.stringify(idx))
         
         return db.collection("Profiles").doc(profileId).collection("lunr_index").doc("images").set({idx:JSON.stringify(idx)}).then(function(){
-          console.log("upload index for ", profileId)
+          return console.log("upload index for ", profileId)
         }).catch((e) => {
-          console.log(e)
+          return console.log(e)
         })
       })
     }).then(() => {
-      console.log("Job Done!!")
+      return console.log("Job Done!!")
     }).catch((e) => {
-      console.log(e)
+      return console.log(e)
     })
-  }
-
-  // Exit if this is a move or deletion event.
-  if (resourceState === 'not_exists') {
-    console.log('This is a deletion event.')
-    return 2
-  }
-
-  // Exit if file exists but is not new and is only being triggered
-  // because of a metadata change.
-  if (resourceState === 'exists' && metageneration > 1) {
-    console.log('This is a metadata change event.')
-    return 3
   }
 
   // [START thumbnailGeneration]
@@ -206,7 +205,7 @@ const generateThumbnail = functions.storage.object().onChange(event => {
       console.log('Thumbnail Uploaded', thumbFilePath200)
       return 4
     }).catch((e) => {
-      console.log(e)
+      return console.log(e)
     })
     
   }).then(() => {
