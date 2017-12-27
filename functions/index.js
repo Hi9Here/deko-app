@@ -148,12 +148,12 @@ const generateThumbnail = functions.storage.object().onChange(event => {
     
     // Generate a thumbnail using ImageMagick.
     return spawn('convert', [tempFilePath, '-thumbnail', '500x500>', tempFilePath500])
-    + spawn('convert', [tempFilePath, '-thumbnail', '200x200>', tempFilePath200])
   }).then(() => {
-    console.log('Thumbnail created from ', tempFilePath)
-    
-    console.log('Thumbnail created at', tempFilePath200)
     console.log('Thumbnail created at', tempFilePath500)
+    // Generate a thumbnail using ImageMagick.
+    return spawn('convert', [tempFilePath, '-thumbnail', '200x200>', tempFilePath200])
+  }).then(() => {
+    console.log('Thumbnail created at', tempFilePath200)
     
     // We add a 'thumb_' prefix to thumbnails file name. That's where we'll upload the thumbnail.
     
@@ -197,12 +197,13 @@ const generateThumbnail = functions.storage.object().onChange(event => {
     })]).then(() => { // Promise All
       // Uploading the thumbnail.
       console.log('Thumbnail Uploading to', thumbFilePath500)
+      return bucket.upload(tempFilePath500, { destination: thumbFilePath500 })
+    }).then(() => {
+      console.log('Thumbnail Uploaded', thumbFilePath500)
       console.log('Thumbnail Uploading to', thumbFilePath200)
-      return bucket.upload(tempFilePath500, { destination: thumbFilePath500 }) + bucket.upload(tempFilePath200, { destination: thumbFilePath200 })
-      
+      return bucket.upload(tempFilePath200, { destination: thumbFilePath200 })
     }).then(() => {
       console.log('Thumbnail Uploaded', thumbFilePath200)
-      console.log('Thumbnail Uploaded', thumbFilePath500)
       return 4
     }).catch((e) => {
       console.log(e)
