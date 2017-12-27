@@ -49,6 +49,10 @@ const generateThumbnail = functions.storage.object().onChange(event => {
   // Exit if the image is already a thumbnail.
   if (fileName.startsWith('thumb_')) {
     console.log('Already a Thumbnail.')
+    if (fileName.startsWith('thumb_500')) {
+      return "Make Luna index on the 200 size and now not to the 500"
+    }
+    
     console.log("Make a new lunr index")
     var images = {}
     var loadImage = function (doc) {
@@ -133,18 +137,32 @@ const generateThumbnail = functions.storage.object().onChange(event => {
   // [START thumbnailGeneration]
   // Download file from bucket.
   const bucket = gcs.bucket(fileBucket)
+  const tempFilePath500 = path.join(os.tmpdir(), fileName) + "_500"
+  const tempFilePath200 = path.join(os.tmpdir(), fileName) + "_200"
   const tempFilePath = path.join(os.tmpdir(), fileName)
+  
   return bucket.file(filePath).download({
     destination: tempFilePath
   }).then(() => {
     console.log('Image downloaded locally to', tempFilePath)
+    
     // Generate a thumbnail using ImageMagick.
-    return spawn('convert', [tempFilePath, '-thumbnail', '500x500>', tempFilePath])
+    return spawn('convert', [tempFilePath, '-thumbnail', '500x500>', tempFilePath500])
+    + spawn('convert', [tempFilePath, '-thumbnail', '200x200>', tempFilePath200])
   }).then(() => {
-    console.log('Thumbnail created at', tempFilePath)
+    console.log('Thumbnail created from ', tempFilePath)
+    
+    console.log('Thumbnail created at', tempFilePath200)
+    console.log('Thumbnail created at', tempFilePath500)
+    
     // We add a 'thumb_' prefix to thumbnails file name. That's where we'll upload the thumbnail.
-    const thumbFileName = `thumb_${fileName}`
-    const thumbFilePath = path.join(path.dirname(filePath), thumbFileName)
+    
+    const thumbFileName500 = `thumb_500_${fileName}`
+    const thumbFileName200 = `thumb_200_${fileName}`
+    
+    const thumbFilePath500 = path.join(path.dirname(filePath), thumbFileName500)
+    const thumbFilePath200 = path.join(path.dirname(filePath), thumbFileName200)
+    
     const uid = filePath.split("/")[0]
     const hash = filePath.split("/")[1]
     var theHash = {}
@@ -178,11 +196,13 @@ const generateThumbnail = functions.storage.object().onChange(event => {
 
     })]).then(() => { // Promise All
       // Uploading the thumbnail.
-      console.log('Thumbnail Uploading to', thumbFilePath)
-      return bucket.upload(tempFilePath, { destination: thumbFilePath })
+      console.log('Thumbnail Uploading to', thumbFilePath500)
+      console.log('Thumbnail Uploading to', thumbFilePath200)
+      return bucket.upload(tempFilePath500, { destination: thumbFilePath500 }) + bucket.upload(tempFilePath200, { destination: thumbFilePath200 })
       
     }).then(() => {
-      console.log('Thumbnail Uploaded', thumbFilePath)
+      console.log('Thumbnail Uploaded', thumbFilePath200)
+      console.log('Thumbnail Uploaded', thumbFilePath500)
       return 4
     }).catch((e) => {
       console.log(e)
@@ -191,6 +211,8 @@ const generateThumbnail = functions.storage.object().onChange(event => {
   }).then(() => {
     console.log("deleted temporary file")
     fs.unlinkSync(tempFilePath)
+    fs.unlinkSync(tempFilePath200)
+    fs.unlinkSync(tempFilePath500)
     return 1
   }).catch((e) => console.log(e))
   // [END thumbnailGeneration]
@@ -336,15 +358,6 @@ app.get("/pik/deko/Welcome,%F0%9F%98%8E%20tap%20here%20and%20I'll%20give%20you%2
 // Collection's Documents cannot be deleted from Datastore
 // If you delete a Collection the Documents remain
 // So by batches the Documents of a Collections are iterated through and deleted
-function deleteCollection(dbs, collectionPath, batchSize) {
-  var collectionRef = dbs.collection(collectionPath);
-  var query = collectionRef.orderBy('__name__').limit(batchSize);
-
-  return new Promise((resolve, reject) => {
-    deleteQueryBatch(dbs, query, batchSize, resolve, reject);
-  })
-}
-
 function deleteQueryBatch(dbs, query, batchSize, resolve, reject) {
   query.get()
     .then((snapshot) => {
@@ -375,6 +388,15 @@ function deleteQueryBatch(dbs, query, batchSize, resolve, reject) {
       })
     })
     .catch(reject);
+}
+
+function deleteCollection(dbs, collectionPath, batchSize) {
+  var collectionRef = dbs.collection(collectionPath);
+  var query = collectionRef.orderBy('__name__').limit(batchSize);
+
+  return new Promise((resolve, reject) => {
+    deleteQueryBatch(dbs, query, batchSize, resolve, reject);
+  })
 }
 // END OF DELETE COLLECTION FUNCTION
 
