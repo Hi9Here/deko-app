@@ -401,4 +401,4 @@ function deleteCollection(dbs, collectionPath, batchSize) {
 // END OF DELETE COLLECTION FUNCTION
 
  app.use('/static', express.static('../public'))
- module.exports = {god, generateThumbnail, giveService, languageService}
+ module.exports = {god, generateThumbnail, giveService}
