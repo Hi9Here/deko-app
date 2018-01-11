@@ -82,6 +82,7 @@ const generateThumbnail = functions.storage.object().onChange(event => {
       }
       if (data.synonyms) {
         synonyms = Object.keys(data.synonyms)
+        console.log("adding synonyms ", synonyms)
       }
       const profileIds = Object.keys(data).filter(key => {
         return data[key] === "profileId"
