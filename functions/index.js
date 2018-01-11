@@ -39,12 +39,12 @@ const generateThumbnail = functions.storage.object().onChange(event => {
   const resourceState = object.resourceState; // The resourceState is 'exists' or 'not_exists' (for file/folder deletions).
   const metageneration = object.metageneration; // Number of times metadata has been generated. New objects have a value of 1.
  
-  console.log(filePath)
+  console.log(filePath, contentType)
   
   // Exit if this is triggered on a file that is not an image.
-  if (!contentType.startsWith('image/')) {
+  if (!contentType.startsWith('image/') && contentType) {
     console.log('This is not an image.')
-    return 1
+ //   return 1
   }
     // Exit if this is a move or deletion event.
   if (resourceState === 'not_exists') {
