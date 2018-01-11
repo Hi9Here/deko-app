@@ -38,7 +38,9 @@ const generateThumbnail = functions.storage.object().onChange(event => {
   const contentType = object.contentType; // File content type.
   const resourceState = object.resourceState; // The resourceState is 'exists' or 'not_exists' (for file/folder deletions).
   const metageneration = object.metageneration; // Number of times metadata has been generated. New objects have a value of 1.
-
+ 
+  console.log(filePath)
+  
   // Exit if this is triggered on a file that is not an image.
   if (!contentType.startsWith('image/')) {
     console.log('This is not an image.')
@@ -60,7 +62,9 @@ const generateThumbnail = functions.storage.object().onChange(event => {
   const fileName = path.basename(filePath);
   // Exit if the image is already a thumbnail.
   if (fileName.startsWith('thumb_')) {
+    console.log(fileName)
     console.log('Already a Thumbnail.')
+    
     if (fileName.startsWith('thumb_500')) {
       return "Make Luna index on the 200 size and now not to the 500"
     }
