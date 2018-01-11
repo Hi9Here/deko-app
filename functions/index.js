@@ -92,7 +92,7 @@ const generateThumbnail = functions.storage.object().onChange(event => {
           words:words.join(" "),
           synonyms:synonyms.join(" "),
           path:data.path+"",
-          name:path.basename(data.path).replace("thumb_", " ").replace(["-","_","."], " "),
+          name:path.basename(data.path).replace("thumb_500_", " ").replace("-"," ").replace("_"," ").replace(".", " "),
         }
       })
     }
