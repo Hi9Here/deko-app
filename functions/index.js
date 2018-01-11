@@ -42,7 +42,7 @@ const generateThumbnail = functions.storage.object().onChange(event => {
   console.log(filePath, contentType)
   
   // Exit if this is triggered on a file that is not an image.
-  if (!contentType.startsWith('image/') && contentType) {
+  if (contentType && !contentType.startsWith('image/')) {
     console.log('This is not an image.')
  //   return 1
   }
