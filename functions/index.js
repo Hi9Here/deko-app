@@ -310,6 +310,8 @@ const giveService = functions.firestore.document('Profiles/{pid}/cards/{cardId}'
             }).catch()
           })
         }  
+      } else {
+        return 0
       }
       console.log("Card Data:", cardStuff)
 })
