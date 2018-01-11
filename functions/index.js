@@ -248,7 +248,7 @@ const languageService = functions.firestore.document('Profiles/{pid}').onWrite(e
 })
 const giveService = functions.firestore.document('Profiles/{pid}/cards/{cardId}').onWrite(event => {
   console.log("Started")
-  console.log(event.data.data())  
+   
       var cardStuff = event.data.data()
       // there are profiles in the given array 
       if (cardStuff.given) {
@@ -305,6 +305,7 @@ const giveService = functions.firestore.document('Profiles/{pid}/cards/{cardId}'
               // then delete the card
               if (cardStuff.pak === 1) {
                 cardRef.delete()
+                console.log("Card Delete")
               }
             }).catch()
           })
