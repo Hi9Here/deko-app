@@ -20,7 +20,7 @@
   "dependencies": {
     "iron-flex-layout": "PolymerElements/iron-flex-layout",
     "deko-page": "Hi9Here/deko-page",
-    "deko-cards": "Hi9Here/deko-cards",
+    "deko-cards": "./gitRepos/deko-cards",
     "firebase-ui-auth": "marcus7777/firebase-ui-auth",
     "iron-pages": "PolymerElements/iron-pages#^1.0.8",
     "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#^1.4.3",
@@ -31,7 +31,8 @@
     "app-route": "PolymerElements/app-route#~0.9.3",
     "polymer": "^1.11.2",
     "paper-chip": "bendavis78/paper-chip#1.1.1",
-    "sets-reps": "Hi9Here/sets-reps"
+    "sets-reps": "Hi9Here/sets-reps",
+    "please-js": "marcus7777/please-js"
   },
   "resolutions": {
     "iron-a11y-keys-behavior": "~1.0.5",
