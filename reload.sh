@@ -6,5 +6,3 @@ cd gitRepos/
     echo "$g updated"
   done
 cd ..
- 
-firebase serve || sh reload.sh
