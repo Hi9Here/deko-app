@@ -297,7 +297,7 @@ const giveService = functions.firestore.document('Profiles/{pid}/cards/{cardId}'
                     // remember not to use db to reference the path to the collection to delete
                     deleteCollection(cardRef, trik, 10)
                   } else {
-                    cardRef.set(pak: cardStuff.pak-1, {merge:true})
+                    cardRef.set({pak: cardStuff.pak-1}, {merge:true})
                   }
                 }).catch(e => {
                   console.log(e)
