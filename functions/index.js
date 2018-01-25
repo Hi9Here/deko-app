@@ -18,6 +18,8 @@ const fs = require('fs')
 
 // vision Modules
 const vision = require('node-cloud-vision-api')
+const dialogflow = require('dialogflow')
+const sessionClient = new dialogflow.SessionsClient()
 
 // Initialize the db
 admin.initializeApp(functions.config().firebase)
@@ -329,6 +331,41 @@ app.set("twig options", {
   strict_variables: false
 })
 
+
+app.get('/hi', function(req, res) {
+  res.setHeader('Content-Type', 'application/json')
+  res.header("Access-Control-Allow-Origin", "*")
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+  const projectId = 'deko-app-one'
+  const sessionId = 'quickstart-session-id'
+  const query = 'hello'
+  const languageCode = 'en-GB'
+  const request = {
+    session: sessionPath,
+    queryInput: {
+      text: {
+        text: query,
+        languageCode: languageCode,
+      },
+    },
+  }
+  sessionClient
+  .detectIntent(request)
+  .then(responses => {
+    console.log('Detected intent');
+    const result = responses[0].queryResult;
+    console.log(`  Query: ${result.queryText}`);
+    console.log(`  Response: ${result.fulfillmentText}`);
+    if (result.intent) {
+      console.log(`  Intent: ${result.intent.displayName}`);
+    } else {
+      console.log(`  No intent matched.`);
+    }
+  })
+  .catch(err => {
+    console.error('ERROR:', err);
+  })
+})
 app.get('/profiles', function(req, res) {
   res.setHeader('Content-Type', 'application/json')
   res.header("Access-Control-Allow-Origin", "*")
