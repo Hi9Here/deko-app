@@ -338,6 +338,7 @@ app.get('/hi', function(req, res) {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
   const projectId = 'deko-app-one'
   const sessionId = 'quickstart-session-id'
+  const sessionPath = sessionClient.sessionPath(projectId, sessionId)
   const query = 'hello'
   const languageCode = 'en-GB'
   const request = {
