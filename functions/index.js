@@ -332,14 +332,14 @@ app.set("twig options", {
 })
 
 
-app.get('/hi', function(req, res) {
+app.get('/detect/:msg/:sig', function(req, res) {
   res.setHeader('Content-Type', 'application/json')
   res.header("Access-Control-Allow-Origin", "*")
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
   const projectId = 'deko-app-one'
-  const sessionId = 'quickstart-session-id'
+  const sessionId = req.params.sig.replace(/[0-9+/\=]/g, '')
   const sessionPath = sessionClient.sessionPath(projectId, sessionId)
-  const query = 'hello'
+  const query = req.params.msg
   const languageCode = 'en-GB'
   const request = {
     session: sessionPath,
@@ -357,9 +357,12 @@ app.get('/hi', function(req, res) {
     const result = responses[0].queryResult;
     console.log(`  Query: ${result.queryText}`);
     console.log(`  Response: ${result.fulfillmentText}`);
+
     if (result.intent) {
+      res.json(result.intent)
       console.log(`  Intent: ${result.intent.displayName}`);
     } else {
+      res.json(false)
       console.log(`  No intent matched.`);
     }
   })
