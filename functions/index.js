@@ -333,6 +333,7 @@ app.set("twig options", {
 
 
 app.get('/detect/:msg/:sig', function(req, res) {
+  console.log(req.params)
   res.setHeader('Content-Type', 'application/json')
   res.header("Access-Control-Allow-Origin", "*")
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
@@ -350,16 +351,15 @@ app.get('/detect/:msg/:sig', function(req, res) {
       },
     },
   }
-  sessionClient
-  .detectIntent(request)
-  .then(responses => {
+  console.log(request)
+  sessionClient.detectIntent(request).then(responses => {
     console.log('Detected intent');
     const result = responses[0].queryResult;
     console.log(`  Query: ${result.queryText}`);
     console.log(`  Response: ${result.fulfillmentText}`);
 
     if (result.intent) {
-      res.json(result.intent)
+      res.json(result.fulfillmentText)
       console.log(`  Intent: ${result.intent.displayName}`);
     } else {
       res.json(false)
