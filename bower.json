@@ -34,12 +34,13 @@
     "polymer": "1.11.3",
     "paper-chip": "bendavis78/paper-chip#1.1.1",
     "sets-reps": "Hi9Here/sets-reps",
-    "please-js": "marcus7777/please-js"
+    "please-js": "marcus7777/please-js",
+    "date-display": "marcus7777/date-display"
   },
   "resolutions": {
     "iron-a11y-keys-behavior": "~1.0.5",
     "firebase": "^4.0.0",
-    "polymer": "1.11.3",
+    "polymer": "^1.11.3",
     "paper-icon-button": "^1.0.0",
     "inbox-search": "45e40c4300",
     "paper-item": "^1.0.0",
