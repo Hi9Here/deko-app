@@ -161,6 +161,11 @@
     deko-page deko-cards .ql-editor h1 {
       font-size: 1.5em;
     }
+    deko-page deko-cards .ql-editor h1 + p {
+      font-size: 2em;
+      font-weight: 900;
+      margin-top: -22px;
+    }
     deko-page deko-cards .ql-editor h2 {
       font-size: 1.3em;
     }
@@ -180,6 +185,20 @@
     }
     deko-page deko-cards .ql-editor > p > img {
       width:100%
+    }
+    deko-page deko-cards .ql-editor > p > input {
+      -moz-user-select: -moz-none;
+      -khtml-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    deko-page deko-cards .open .ql-editor > p > input {
+      -moz-user-select: auto;
+      -khtml-user-select: auto;
+      -webkit-user-select: auto;
+      -ms-user-select: auto;
+      user-select: auto;
     }
     deko-page deko-cards .ql-editor .green.signatures {
       text-shadow: 4px 6px 2px green;
