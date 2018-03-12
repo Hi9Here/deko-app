@@ -21,6 +21,7 @@
     "iron-flex-layout": "PolymerElements/iron-flex-layout",
     "deko-page": "Hi9Here/deko-page",
     "deko-card": "./gitRepos/deko-card",
+    "deko-display-chips": "./gitRepos/deko-display-chips",
     "deko-cards": "./gitRepos/deko-cards",
     "deko-card-container": "./gitRepos/deko-card-container",
     "firebase-ui-auth": "marcus7777/firebase-ui-auth",
